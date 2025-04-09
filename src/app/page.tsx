@@ -84,12 +84,14 @@ export default function Home() {
       try {
         const values = await Promise.all(
           Object.values(resumeFiles).map(async (url) => {
-            const res = await fetch(url);
-            if (!res.ok) {
-              console.warn('⚠️ Failed to fetch:', url)
-              return '[Failed to load]'
-            }
-            return res.text()
+            const res = await fetch('/api/fetch-resume', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ url })
+            });
+
+            const data = await res.json();
+            return data.text || '[Failed to load]';
           })
         );
 
@@ -97,7 +99,7 @@ export default function Home() {
         setResumeData(combined);
       } catch (error) {
         console.error('❌ Error fetching resume data:', error);
-        setResumeData('[Resume data not available]')
+        setResumeData('[Resume data not available]');
       }
     }
 
