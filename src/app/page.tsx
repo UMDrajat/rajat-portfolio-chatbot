@@ -83,12 +83,21 @@ export default function Home() {
     const fetchResumeFiles = async () => {
       try {
         const values = await Promise.all(
-          Object.values(resumeFiles).map(url => fetch(url).then(res => res.text()))
-        )
-        const combined = `Resume Summary:\n${values[1]}\n\nSkills:\n${values[0]}\n\nProjects:\n${values[2]}\n\nExperience:\n${values[3]}\n\nEducation:\n${values[4]}`
-        setResumeData(combined)
+          Object.values(resumeFiles).map(async (url) => {
+            const res = await fetch(url);
+            if (!res.ok) {
+              console.warn('⚠️ Failed to fetch:', url)
+              return '[Failed to load]'
+            }
+            return res.text()
+          })
+        );
+
+        const combined = `Resume Summary:\n${values[1]}\n\nSkills:\n${values[0]}\n\nProjects:\n${values[2]}\n\nExperience:\n${values[3]}\n\nEducation:\n${values[4]}`;
+        setResumeData(combined);
       } catch (error) {
-        console.error('Error fetching resume:', error)
+        console.error('❌ Error fetching resume data:', error);
+        setResumeData('[Resume data not available]')
       }
     }
 
