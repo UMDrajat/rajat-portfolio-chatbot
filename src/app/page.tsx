@@ -139,6 +139,19 @@ export default function Home() {
           ))}
         </div>
 
+        {/* Clear Chat Button */}
+        <div className="w-full flex justify-end mb-4">
+          <button
+            onClick={() => {
+              setMessages([]);
+              localStorage.removeItem('chat_history');
+            }}
+            className="text-sm text-red-600 hover:underline"
+          >
+            Clear Chat
+          </button>
+        </div>
+
         {/* Chat messages */}
         <div className="space-y-3 mb-4 max-h-[50vh] overflow-y-auto pr-2">
           {messages.map((msg, i) => (
