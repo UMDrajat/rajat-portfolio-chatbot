@@ -12,11 +12,23 @@ export default function Home() {
   ];
 
   const [messages, setMessages] = useState<{ from: string; text: string }[]>([])
+  const [loading, setLoading] = useState(false)
+  const [resumeData, setResumeData] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
+  const resumeFiles = {
+    skills: 'https://drive.google.com/uc?export=download&id=1SAPr8ABcL6P6j5F0_98vBMn873X1HaUr',
+    summary: 'https://drive.google.com/uc?export=download&id=1GJGFoy3G4au58lgQSwpMyD-jV-L7YJ_T',
+    projects: 'https://drive.google.com/uc?export=download&id=11NzBkRHn4JuKVmaGd4P2nJ7uXq8MYl8x',
+    experience: 'https://drive.google.com/uc?export=download&id=1GDM40xtkWR_LRq31zr3DhX6aL3SHdzSi',
+    education: 'https://drive.google.com/uc?export=download&id=1zXaaq3CS5a-r8O1qSSiPS_nLSd8cy5l7'
+  }
+
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
-    const apiKey = 'YOUR_OPENROUTER_API_KEY' // Replace this before deployment
-    const resumeData = `Rajat Nirwan is a project manager and data-focused technologist skilled in AI, analytics, and full-stack product delivery.`
+    const apiKey = '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'
+    const systemPrompt = resumeData
+      ? `You are Rajat Nirwan’s AI assistant. Use the following resume content to answer user questions:\n\n${resumeData}`
+      : `You are Rajat Nirwan’s AI assistant. Resume data is loading.`
 
     try {
       const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -28,14 +40,8 @@ export default function Home() {
         body: JSON.stringify({
           model: 'meta-llama/llama-3-70b-instruct',
           messages: [
-            {
-              role: 'system',
-              content: `You are Rajat Nirwan’s AI assistant. Use the following resume content to answer user questions:\n\n${resumeData}`
-            },
-            {
-              role: 'user',
-              content: userMessage
-            }
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userMessage }
           ]
         })
       })
@@ -62,11 +68,35 @@ export default function Home() {
 
   const handleUserMessage = async (text: string) => {
     setMessages((prev) => [...prev, { from: 'user', text }])
+    setLoading(true)
     const botReply = await fetchFromOpenRouter(text)
     setMessages((prev) => [...prev, { from: 'user', text }, { from: 'bot', text: botReply }])
+    setLoading(false)
   }
 
   useEffect(() => {
+    const storedMessages = localStorage.getItem('chat_history')
+    if (storedMessages) {
+      setMessages(JSON.parse(storedMessages))
+    }
+
+    const fetchResumeFiles = async () => {
+      try {
+        const values = await Promise.all(
+          Object.values(resumeFiles).map(url => fetch(url).then(res => res.text()))
+        )
+        const combined = `Resume Summary:\n${values[1]}\n\nSkills:\n${values[0]}\n\nProjects:\n${values[2]}\n\nExperience:\n${values[3]}\n\nEducation:\n${values[4]}`
+        setResumeData(combined)
+      } catch (error) {
+        console.error('Error fetching resume:', error)
+      }
+    }
+
+    fetchResumeFiles()
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('chat_history', JSON.stringify(messages))
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
@@ -109,6 +139,13 @@ export default function Home() {
               </div>
             </div>
           ))}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="px-4 py-2 rounded-xl max-w-xs bg-gray-200 text-black animate-pulse">
+                Typing...
+              </div>
+            </div>
+          )}
           <div ref={bottomRef}></div>
         </div>
 
