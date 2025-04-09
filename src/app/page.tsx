@@ -1,6 +1,7 @@
 'use client'
 
 import Image from "next/image";
+import { useState, useRef, useEffect } from "react";
 
 export default function Home() {
   const promptButtons = [
@@ -9,6 +10,65 @@ export default function Home() {
     "Tell me about one of his projects",
     "Does he have AI/ML experience?"
   ];
+
+  const [messages, setMessages] = useState<{ from: string; text: string }[]>([])
+  const bottomRef = useRef<HTMLDivElement | null>(null)
+
+  const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
+    const apiKey = 'YOUR_OPENROUTER_API_KEY' // Replace this before deployment
+    const resumeData = `Rajat Nirwan is a project manager and data-focused technologist skilled in AI, analytics, and full-stack product delivery.`
+
+    try {
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'meta-llama/llama-3-70b-instruct',
+          messages: [
+            {
+              role: 'system',
+              content: `You are Rajat Nirwan’s AI assistant. Use the following resume content to answer user questions:\n\n${resumeData}`
+            },
+            {
+              role: 'user',
+              content: userMessage
+            }
+          ]
+        })
+      })
+
+      const data = await res.json()
+      return data.choices?.[0]?.message?.content || '❌ Sorry, no response.'
+    } catch (error) {
+      console.error('OpenRouter API error:', error)
+      return '⚠️ Failed to get response.'
+    }
+  }
+
+  const handlePromptClick = (prompt: string) => {
+    handleUserMessage(prompt)
+  }
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && e.currentTarget.value.trim() !== '') {
+      const userInput = e.currentTarget.value
+      e.currentTarget.value = ''
+      handleUserMessage(userInput)
+    }
+  }
+
+  const handleUserMessage = async (text: string) => {
+    setMessages((prev) => [...prev, { from: 'user', text }])
+    const botReply = await fetchFromOpenRouter(text)
+    setMessages((prev) => [...prev, { from: 'user', text }, { from: 'bot', text: botReply }])
+  }
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
 
   return (
     <main className="min-h-screen bg-gray-100 p-4 flex flex-col items-center">
@@ -30,6 +90,7 @@ export default function Home() {
           {promptButtons.map((prompt, i) => (
             <button
               key={i}
+              onClick={() => handlePromptClick(prompt)}
               className="bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm px-4 py-2 rounded-full transition"
             >
               {prompt}
@@ -37,8 +98,27 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Placeholder */}
-        <div className="text-sm text-gray-500">Chat interface coming next...</div>
+        {/* Chat messages */}
+        <div className="space-y-3 mb-4 max-h-[50vh] overflow-y-auto pr-2">
+          {messages.map((msg, i) => (
+            <div key={i} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`px-4 py-2 rounded-xl text-sm shadow-sm max-w-[80%] ${
+                msg.from === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
+              }`}>
+                {msg.text}
+              </div>
+            </div>
+          ))}
+          <div ref={bottomRef}></div>
+        </div>
+
+        {/* Input box */}
+        <input
+          type="text"
+          placeholder="Ask me something..."
+          onKeyDown={handleInputKeyDown}
+          className="w-full border border-gray-300 rounded-full px-5 py-3 text-sm shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
       </div>
     </main>
   );
