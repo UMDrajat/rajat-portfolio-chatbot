@@ -84,8 +84,8 @@ export default function Home() {
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
     const apiKey = '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'
     const systemPrompt = resumeData
-      ? `You are Rajat Nirwan’s portfolio chatbot. Only answer based on the resume data provided below. If something is not present in the resume, reply with: "This information is not available in the resume."\n\nResume:\n${resumeData}`
-      : `You are Rajat Nirwan’s portfolio chatbot. Resume data is still loading. Please wait.`
+      ? `You're Rajat Nirwan’s friendly portfolio assistant. Respond in a natural, conversational tone—like you're talking to a colleague. Only use the data below. If something’s missing, kindly say it isn’t available.\n\nResume:\n${resumeData}`
+      : `Hi! I’m Rajat’s portfolio assistant. His resume is still loading. Could you give it a moment and ask again shortly?`
 
     try {
       const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -112,7 +112,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen w-full bg-gray-100 px-8 py-10 flex flex-col items-center">
+    <main className="min-h-screen w-full bg-gray-100 px-8 py-10 flex flex-col items-start">
       <div className="w-full h-full min-h-[85vh] bg-white rounded-2xl shadow-xl p-10 border border-gray-200">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -140,15 +140,17 @@ export default function Home() {
         {/* Suggestion Prompts */}
         {messages.length === 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-            {promptButtons.filter(prompt => !messages.some(msg => msg.text === prompt)).map((prompt, i) => (
-              <button
-                key={i}
-                onClick={() => handlePromptClick(prompt)}
-                className="border border-blue-200 hover:bg-blue-50 text-sm text-blue-800 px-4 py-3 rounded-xl shadow-sm text-left"
-              >
-                {prompt}
-              </button>
-            ))}
+            {promptButtons
+              .filter(prompt => !messages.some(msg => msg.from === 'user' && msg.text === prompt))
+              .map((prompt, i) => (
+                <button
+                  key={i}
+                  onClick={() => handlePromptClick(prompt)}
+                  className="border border-blue-200 hover:bg-blue-50 text-sm text-blue-800 px-4 py-3 rounded-xl shadow-sm text-left"
+                >
+                  {prompt}
+                </button>
+              ))}
           </div>
         )}
 
