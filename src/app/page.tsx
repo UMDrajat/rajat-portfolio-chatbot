@@ -113,7 +113,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen w-full bg-gray-100 px-8 py-10 flex flex-col items-center">
-      <div className="w-full max-w-6xl min-h-[85vh] bg-white rounded-2xl shadow-xl p-10 border border-gray-200">
+      <div className="w-full h-full min-h-[85vh] bg-white rounded-2xl shadow-xl p-10 border border-gray-200">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -140,7 +140,7 @@ export default function Home() {
         {/* Suggestion Prompts */}
         {messages.length === 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-            {promptButtons.map((prompt, i) => (
+            {promptButtons.filter(prompt => !messages.some(msg => msg.text === prompt)).map((prompt, i) => (
               <button
                 key={i}
                 onClick={() => handlePromptClick(prompt)}
@@ -157,7 +157,7 @@ export default function Home() {
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`px-4 py-2 rounded-xl text-sm shadow-sm max-w-[80%] ${
-                msg.from === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
+                msg.from === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'
               }`}>
                 {msg.text}
               </div>
