@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 
 export default function Home() {
   const [messages, setMessages] = useState<{ from: string; text: string }[]>([])
+  const [usedPrompts, setUsedPrompts] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [resumeData, setResumeData] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement | null>(null)
@@ -75,6 +76,7 @@ export default function Home() {
 
   const handleUserMessage = async (text: string) => {
     setMessages((prev) => [...prev, { from: 'user', text }])
+    setUsedPrompts((prev) => [...prev, text])
     setLoading(true)
     const botReply = await fetchFromOpenRouter(text)
     setMessages((prev) => [...prev, { from: 'user', text }, { from: 'bot', text: botReply }])
@@ -129,6 +131,7 @@ export default function Home() {
           <button
             onClick={() => {
               setMessages([])
+              setUsedPrompts([])
               localStorage.removeItem('chat_history')
             }}
             className="text-sm text-blue-600 hover:underline"
@@ -140,8 +143,8 @@ export default function Home() {
         {/* Suggestion Prompts */}
         {messages.length === 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-            {promptButtons
-              .filter(prompt => !messages.some(msg => msg.from === 'user' && msg.text === prompt))
+        {promptButtons
+              .filter(prompt => !usedPrompts.includes(prompt))
               .map((prompt, i) => (
                 <button
                   key={i}
