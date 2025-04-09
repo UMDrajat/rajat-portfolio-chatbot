@@ -27,8 +27,8 @@ export default function Home() {
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
     const apiKey = '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'
     const systemPrompt = resumeData
-      ? `You are Rajat Nirwan’s AI assistant. Use the following resume content to answer user questions:\n\n${resumeData}`
-      : `You are Rajat Nirwan’s AI assistant. Resume data is loading.`
+      ? `You are Rajat Nirwan’s portfolio chatbot. Only answer based on the resume data provided below. If something is not present in the resume, reply with: "This information is not available in the resume."\n\nResume:\n${resumeData}`
+      : `You are Rajat Nirwan’s portfolio chatbot. Resume data is still loading. Please wait.`
 
     try {
       const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
