@@ -343,7 +343,7 @@ Only use the resume data below, and if something isn’t available, kindly say s
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-4 px-6 shadow-lg z-50">
           <div className="flex items-center gap-3 max-w-4xl mx-auto">
             {/* Mic icon with voice-to-text (placeholder) */}
-            <div className="relative">
+            <div className="flex items-center space-x-2">
               <button
                 onClick={handleVoiceInput}
                 className="text-xl px-3 py-2 rounded-full hover:bg-gray-100 transition"
@@ -354,7 +354,7 @@ Only use the resume data below, and if something isn’t available, kindly say s
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="absolute left-full ml-2 text-xs border border-gray-300 rounded px-2 py-1 bg-white shadow"
+                className="text-xs border border-gray-300 rounded px-2 py-1 bg-white shadow"
               >
                 <option value="en-US">🇺🇸 English</option>
                 <option value="hi-IN">🇮🇳 Hindi</option>
