@@ -213,6 +213,22 @@ Only use the resume data below, and if something isn’t available, kindly say s
           </button>
         </div>
 
+        {/* Regenerate Suggestions Button */}
+        {smartPrompts.length > 0 && (
+          <div className="flex justify-end mb-2">
+            <button
+              onClick={() => {
+                const regenerated = [...allPromptSuggestions].sort(() => 0.5 - Math.random());
+                setSmartPrompts(regenerated.slice(0, 3));
+                localStorage.setItem('smart_prompts', JSON.stringify(regenerated.slice(0, 3)));
+              }}
+              className="text-xs text-blue-600 hover:underline"
+            >
+              ↻ Regenerate Suggestions
+            </button>
+          </div>
+        )}
+
         {/* Suggestion Prompts */}
         {smartPrompts.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
