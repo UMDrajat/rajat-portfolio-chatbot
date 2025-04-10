@@ -8,6 +8,7 @@ export default function Home() {
   const [usedPrompts, setUsedPrompts] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [resumeData, setResumeData] = useState<string | null>(null)
+  const [smartPrompts, setSmartPrompts] = useState<string[]>([]);
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
   const allPromptSuggestions = [
@@ -64,6 +65,45 @@ export default function Home() {
     localStorage.setItem('chat_history', JSON.stringify(messages))
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  useEffect(() => {
+    if (messages.length === 0) {
+      setSmartPrompts([...allPromptSuggestions].sort(() => 0.5 - Math.random()));
+      return;
+    }
+
+    const lastBotMsg = messages[messages.length - 1];
+    if (lastBotMsg.from === 'bot') {
+      const suggestions: Set<string> = new Set();
+
+      const text = lastBotMsg.text.toLowerCase();
+
+      if (text.includes('project')) {
+        suggestions.add("What challenges did Rajat face in this project?");
+        suggestions.add("What tools did he use?");
+        suggestions.add("Was this a solo or team effort?");
+      }
+      if (text.includes('skills')) {
+        suggestions.add("Which skill is he most confident in?");
+        suggestions.add("How did he gain these skills?");
+        suggestions.add("Does he have leadership experience?");
+      }
+      if (text.includes('experience')) {
+        suggestions.add("Tell me more about his work at Econote.");
+        suggestions.add("How long did he work in product management?");
+        suggestions.add("Did he manage a team?");
+      }
+
+      // fallback suggestions
+      if (suggestions.size === 0) {
+        suggestions.add("Tell me more.");
+        suggestions.add("What else is interesting?");
+        suggestions.add("How does this relate to AI?");
+      }
+
+      setSmartPrompts(Array.from(suggestions).slice(0, 3));
+    }
+  }, [messages]);
 
   const handlePromptClick = (prompt: string) => {
     handleUserMessage(prompt)
@@ -135,6 +175,7 @@ export default function Home() {
             onClick={() => {
               setMessages([{ from: 'bot', text: "👋 Welcome to Rajat Nirwan's Portfolio. How can I help you?" }])
               setUsedPrompts([])
+              setSmartPrompts([...allPromptSuggestions].sort(() => 0.5 - Math.random()));
               setPromptButtons([...allPromptSuggestions].sort(() => 0.5 - Math.random()))
               localStorage.removeItem('chat_history')
             }}
@@ -145,19 +186,25 @@ export default function Home() {
         </div>
 
         {/* Suggestion Prompts */}
-        {promptButtons.length > 0 && (
+        {smartPrompts.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-            {promptButtons
-              .filter(prompt => !usedPrompts.includes(prompt))
-              .map((prompt, i) => (
+            {smartPrompts.map((prompt, i) => {
+              const icon = prompt.toLowerCase().includes('project') ? '🛠️' :
+                           prompt.toLowerCase().includes('skill') ? '💡' :
+                           prompt.toLowerCase().includes('experience') ? '📁' :
+                           prompt.toLowerCase().includes('ai') ? '🤖' :
+                           '💬';
+              return (
                 <button
                   key={i}
                   onClick={() => handlePromptClick(prompt)}
-                  className="border border-blue-200 hover:bg-blue-50 text-sm text-blue-800 px-4 py-3 rounded-xl shadow-sm text-left transition duration-300 ease-in-out transform hover:-translate-y-1"
+                  className="border border-blue-200 hover:bg-blue-50 text-sm text-blue-800 px-4 py-3 rounded-xl shadow-sm text-left transition duration-300 ease-in-out transform hover:-translate-y-1 flex gap-2 items-center"
                 >
-                  {prompt}
+                  <span>{icon}</span>
+                  <span>{prompt}</span>
                 </button>
-              ))}
+              )
+            })}
           </div>
         )}
 
