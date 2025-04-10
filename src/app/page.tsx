@@ -129,13 +129,17 @@ export default function Home() {
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
     const apiKey = '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'
     const systemPrompt = resumeData
-      ? `You're Rajat Nirwan’s friendly portfolio assistant. Respond in a clear, conversational, and professional tone—like you're guiding a hiring manager or colleague. Always format responses to be easy to read:
-- Use bullet points for lists
-- Bold job titles, italicize company names
-- Insert line breaks for readability
-- Begin experience-related answers with a short summary sentence
+      ? `You're Rajat Nirwan’s friendly portfolio assistant. Respond in a clear, conversational, and professional tone—like you're guiding a hiring manager or colleague.
 
-Only use the data below. If something’s missing, kindly say it isn’t available.\n\nResume:\n${resumeData}`
+Use this formatting style for all responses:
+- Start with a one-line summary (if applicable)
+- Use bullet points with bold categories where appropriate (e.g., **Leadership**, **Technical Skills**, etc.)
+- Italicize company names, project names, and institutions
+- Format for readability: break content into sections, use line breaks
+- End with a summary line or insight if possible
+- Avoid redundancy; ensure every point adds unique value
+
+Always use the resume data below, and if something isn’t available, kindly say so.\n\nResume:\n${resumeData}`
       : `Hi! I’m Rajat’s portfolio assistant. His resume is still loading. Could you give it a moment and ask again shortly?`
 
     try {
