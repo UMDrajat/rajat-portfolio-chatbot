@@ -185,7 +185,7 @@ Only use the resume data below, and if something isn’t available, kindly say s
   }
 
   return (
-    <main className="min-h-screen w-full bg-gray-100 px-8 py-10 flex flex-col items-start">
+    <main className="min-h-screen w-full bg-gray-100 px-8 py-4 flex flex-col items-start justify-between">
       <div className="w-full h-full min-h-[85vh] bg-white rounded-2xl shadow-xl p-10 border border-gray-200">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -290,14 +290,14 @@ Only use the resume data below, and if something isn’t available, kindly say s
         </div>
 
         {/* Sticky input with Send + Mic */}
-        <div className="sticky bottom-0 bg-white pt-4 pb-2 mt-4 w-full">
-          <div className="flex items-center gap-2">
-            {/* Mic icon (placeholder) */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-4 px-6 shadow-lg z-50">
+          <div className="flex items-center gap-3 max-w-4xl mx-auto">
+            {/* Mic icon with voice-to-text (placeholder) */}
             <button
-              className="text-xl px-3 py-2 rounded-full hover:bg-gray-200 transition"
+              className="text-xl px-3 py-2 rounded-full hover:bg-gray-100 transition"
               title="Voice input (coming soon)"
             >
-              🗣️
+              🎤
             </button>
 
             {/* Text input */}
@@ -310,7 +310,7 @@ Only use the resume data below, and if something isn’t available, kindly say s
 
             {/* Send button */}
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow transition"
               onClick={() => {
                 const input = document.querySelector<HTMLInputElement>('input[type="text"]');
                 if (input?.value.trim()) {
