@@ -185,8 +185,8 @@ Only use the resume data below, and if something isn’t available, kindly say s
   }
 
   return (
-    <main className="min-h-screen w-full bg-gray-100 px-8 py-4 flex flex-col items-start justify-between">
-      <div className="w-full h-full min-h-[85vh] bg-white rounded-2xl shadow-xl p-10 border border-gray-200">
+    <main className="min-h-screen w-full px-8 py-4 flex flex-col items-start justify-between">
+      <div className="w-full h-full min-h-[85vh] p-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -269,20 +269,24 @@ Only use the resume data below, and if something isn’t available, kindly say s
         )}
 
         {/* Chat messages */}
-        <div className="space-y-3 mb-4 max-h-[50vh] overflow-y-auto pr-2">
+        <div className="space-y-4 mb-4 max-h-[65vh] overflow-y-auto">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`px-4 py-2 rounded-xl text-sm shadow-sm max-w-[80%] ${
-                msg.from === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'
-              }`}>
-                {msg.text}
+              <div className="bg-white/70 rounded-xl p-3 shadow-sm">
+                <div className={`px-4 py-2 rounded-xl text-sm shadow-sm max-w-[80%] ${
+                  msg.from === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'
+                }`}>
+                  {msg.text}
+                </div>
               </div>
             </div>
           ))}
           {loading && (
             <div className="flex justify-start">
-              <div className="px-4 py-2 rounded-xl max-w-xs bg-gray-200 text-black animate-pulse">
-                Typing...
+              <div className="bg-white/70 rounded-xl p-3 shadow-sm">
+                <div className="px-4 py-2 rounded-xl max-w-xs bg-gray-200 text-black animate-pulse">
+                  Typing...
+                </div>
               </div>
             </div>
           )}
