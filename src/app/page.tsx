@@ -185,7 +185,7 @@ Only use the resume data below, and if something isn’t available, kindly say s
   }
 
   return (
-    <main className="min-h-screen w-full px-8 py-4 flex flex-col items-start justify-between">
+    <main className="min-h-screen w-full px-8 py-4 flex flex-col items-start justify-between bg-[#f7f9fb]">
       <div className="w-full h-full min-h-[85vh] p-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -272,7 +272,7 @@ Only use the resume data below, and if something isn’t available, kindly say s
         <div className="space-y-4 mb-4 max-h-[65vh] overflow-y-auto">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className="bg-white/70 rounded-xl p-3 shadow-sm">
+              <div className="rounded-xl p-3">
                 <div className={`px-4 py-2 rounded-xl text-sm shadow-sm max-w-[80%] ${
                   msg.from === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'
                 }`}>
@@ -283,7 +283,7 @@ Only use the resume data below, and if something isn’t available, kindly say s
           ))}
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-white/70 rounded-xl p-3 shadow-sm">
+              <div className="rounded-xl p-3">
                 <div className="px-4 py-2 rounded-xl max-w-xs bg-gray-200 text-black animate-pulse">
                   Typing...
                 </div>
