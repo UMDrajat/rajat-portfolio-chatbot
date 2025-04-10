@@ -16,9 +16,7 @@ export default function Home() {
     "Tell me about one of his projects",
     "Does he have AI/ML experience?"
   ];
-  const [promptButtons, setPromptButtons] = useState<string[]>(() =>
-    [...allPromptSuggestions].sort(() => 0.5 - Math.random())
-  );
+  const [promptButtons, setPromptButtons] = useState<string[]>([]);
 
   const resumeFiles = {
     skills: 'https://drive.google.com/uc?export=download&id=1SAPr8ABcL6P6j5F0_98vBMn873X1HaUr',
@@ -33,6 +31,8 @@ export default function Home() {
     if (storedMessages) {
       setMessages(JSON.parse(storedMessages))
     }
+    
+    setPromptButtons([...allPromptSuggestions].sort(() => 0.5 - Math.random()));
 
     const fetchResumeFiles = async () => {
       try {
