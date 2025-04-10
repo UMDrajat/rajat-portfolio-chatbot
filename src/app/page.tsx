@@ -14,6 +14,7 @@ export default function Home() {
   const [promptHistory, setPromptHistory] = useState<Set<string>>(new Set());
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [listening, setListening] = useState(false);
+  const [language, setLanguage] = useState('en-US');
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
   const handleVoiceInput = () => {
@@ -25,14 +26,21 @@ export default function Home() {
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = 'en-US';
+    recognition.lang = language;
 
-    recognition.onstart = () => setListening(true);
-    recognition.onend = () => setListening(false);
+    recognition.onstart = () => {
+      setListening(true);
+      document.querySelector('input[type="text"]')?.classList.add('ring-2', 'ring-green-400');
+    };
+    recognition.onend = () => {
+      setListening(false);
+      document.querySelector('input[type="text"]')?.classList.remove('ring-2', 'ring-green-400');
+    };
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
       handleUserMessage(transcript);
+      recognition.stop();
     };
 
     recognition.start();
@@ -335,13 +343,25 @@ Only use the resume data below, and if something isn’t available, kindly say s
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-4 px-6 shadow-lg z-50">
           <div className="flex items-center gap-3 max-w-4xl mx-auto">
             {/* Mic icon with voice-to-text (placeholder) */}
-            <button
-              onClick={handleVoiceInput}
-              className="text-xl px-3 py-2 rounded-full hover:bg-gray-100 transition"
-              title="Voice input"
-            >
-              🎤
-            </button>
+            <div className="relative">
+              <button
+                onClick={handleVoiceInput}
+                className="text-xl px-3 py-2 rounded-full hover:bg-gray-100 transition"
+                title="Voice input"
+              >
+                🎤
+              </button>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="absolute left-full ml-2 text-xs border border-gray-300 rounded px-2 py-1 bg-white shadow"
+              >
+                <option value="en-US">🇺🇸 English</option>
+                <option value="hi-IN">🇮🇳 Hindi</option>
+                <option value="es-ES">🇪🇸 Spanish</option>
+                <option value="fr-FR">🇫🇷 French</option>
+              </select>
+            </div>
 
             {/* Text input */}
             <input
