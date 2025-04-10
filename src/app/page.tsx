@@ -10,12 +10,15 @@ export default function Home() {
   const [resumeData, setResumeData] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
-  const promptButtons = [
+  const allPromptSuggestions = [
     "Show me Rajat's resume summary",
     "What are his top skills?",
     "Tell me about one of his projects",
     "Does he have AI/ML experience?"
-  ]
+  ];
+  const [promptButtons, setPromptButtons] = useState<string[]>(() =>
+    [...allPromptSuggestions].sort(() => 0.5 - Math.random())
+  );
 
   const resumeFiles = {
     skills: 'https://drive.google.com/uc?export=download&id=1SAPr8ABcL6P6j5F0_98vBMn873X1HaUr',
@@ -30,8 +33,6 @@ export default function Home() {
     if (storedMessages) {
       setMessages(JSON.parse(storedMessages))
     }
-
-    promptButtons.sort(() => 0.5 - Math.random())
 
     const fetchResumeFiles = async () => {
       try {
@@ -81,7 +82,7 @@ export default function Home() {
     setUsedPrompts((prev) => [...prev, text])
     setLoading(true)
     const botReply = await fetchFromOpenRouter(text)
-    setMessages((prev) => [...prev, { from: 'user', text }, { from: 'bot', text: botReply }])
+    setMessages((prev) => [...prev, { from: 'bot', text: botReply }])
     setLoading(false)
   }
 
@@ -134,6 +135,7 @@ export default function Home() {
             onClick={() => {
               setMessages([{ from: 'bot', text: "👋 Welcome to Rajat Nirwan's Portfolio. How can I help you?" }])
               setUsedPrompts([])
+              setPromptButtons([...allPromptSuggestions].sort(() => 0.5 - Math.random()))
               localStorage.removeItem('chat_history')
             }}
             className="text-sm text-blue-600 hover:underline"
@@ -143,9 +145,9 @@ export default function Home() {
         </div>
 
         {/* Suggestion Prompts */}
-        {messages.length === 0 && (
+        {promptButtons.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-        {promptButtons
+            {promptButtons
               .filter(prompt => !usedPrompts.includes(prompt))
               .map((prompt, i) => (
                 <button
