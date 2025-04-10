@@ -86,7 +86,7 @@ export default function Home() {
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
     const apiKey = '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'
     const systemPrompt = resumeData
-      ? `You're Rajat Nirwan’s friendly portfolio assistant. Respond in a natural, conversational tone—like you're talking to a colleague. Only use the data below. If something’s missing, kindly say it isn’t available.\n\nResume:\n${resumeData}`
+      ? `You're Rajat Nirwan’s friendly portfolio assistant. Respond in a natural, conversational tone—like you're talking to a colleague. Only use the data below. Always format the data in presentable way. If something’s missing, kindly say it isn’t available.\n\nResume:\n${resumeData}`
       : `Hi! I’m Rajat’s portfolio assistant. His resume is still loading. Could you give it a moment and ask again shortly?`
 
     try {
