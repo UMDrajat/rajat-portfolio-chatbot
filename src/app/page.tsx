@@ -288,13 +288,15 @@ Only use the resume data below, and if something isn’t available, kindly say s
           <div ref={bottomRef}></div>
         </div>
 
-        {/* Input box */}
-        <input
-          type="text"
-          placeholder="Ask me something..."
-          onKeyDown={handleInputKeyDown}
-          className="w-full border border-gray-300 rounded-full px-5 py-3 text-sm shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
+        {/* Sticky input box */}
+        <div className="sticky bottom-0 bg-white pt-2 mt-4">
+          <input
+            type="text"
+            placeholder="Ask me something..."
+            onKeyDown={handleInputKeyDown}
+            className="w-full border border-gray-300 rounded-full px-5 py-3 text-sm shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
       </div>
     </main>
   )
