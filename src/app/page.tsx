@@ -245,23 +245,32 @@ Only use the resume data below, and if something isn’t available, kindly say s
             />
             <h1 className="text-xl font-semibold text-gray-800">Rajat Nirwan's Portfolio</h1>
           </div>
-          <button
-            onClick={() => {
-              setMessages([{ from: 'bot', text: "👋 Welcome to Rajat Nirwan's Portfolio. How can I help you?" }])
-              setUsedPrompts([])
-              setLastTopic(null)
-              setPromptHistory(new Set())
-              localStorage.removeItem('chat_history')
-              localStorage.removeItem('smart_prompts')
-              const initialPrompts = [...allPromptSuggestions].sort(() => 0.5 - Math.random()).slice(0, 3);
-              setSmartPrompts(initialPrompts)
-              setPromptButtons(initialPrompts)
-              localStorage.setItem('smart_prompts', JSON.stringify(initialPrompts))
-            }}
-            className="text-sm text-blue-600 hover:underline"
-          >
-            + New Chat
-          </button>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://drive.google.com/uc?export=download&id=1GJGFoy3G4au58lgQSwpMyD-jV-L7YJ_T"
+              download
+              className="text-sm text-blue-600 hover:underline"
+            >
+              ⬇️ Download Resume
+            </a>
+            <button
+              onClick={() => {
+                setMessages([{ from: 'bot', text: "👋 Welcome to Rajat Nirwan's Portfolio. How can I help you?" }])
+                setUsedPrompts([])
+                setLastTopic(null)
+                setPromptHistory(new Set())
+                localStorage.removeItem('chat_history')
+                localStorage.removeItem('smart_prompts')
+                const initialPrompts = [...allPromptSuggestions].sort(() => 0.5 - Math.random()).slice(0, 3);
+                setSmartPrompts(initialPrompts)
+                setPromptButtons(initialPrompts)
+                localStorage.setItem('smart_prompts', JSON.stringify(initialPrompts))
+              }}
+              className="text-sm text-blue-600 hover:underline"
+            >
+              + New Chat
+            </button>
+          </div>
         </div>
 
         {/* Regenerate Suggestions Button */}
