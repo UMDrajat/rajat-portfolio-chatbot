@@ -11,6 +11,7 @@ export default function Home() {
   const [smartPrompts, setSmartPrompts] = useState<string[]>([]);
   const [lastTopic, setLastTopic] = useState<string | null>(null);
   const [promptHistory, setPromptHistory] = useState<Set<string>>(new Set());
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
   const allPromptSuggestions = [
@@ -202,10 +203,13 @@ Only use the resume data below, and if something isn’t available, kindly say s
             onClick={() => {
               setMessages([{ from: 'bot', text: "👋 Welcome to Rajat Nirwan's Portfolio. How can I help you?" }])
               setUsedPrompts([])
-              setSmartPrompts([...allPromptSuggestions].sort(() => 0.5 - Math.random()));
-              setPromptButtons([...allPromptSuggestions].sort(() => 0.5 - Math.random()))
+              setLastTopic(null)
+              setPromptHistory(new Set())
+              const initialPrompts = [...allPromptSuggestions].sort(() => 0.5 - Math.random()).slice(0, 3);
+              setSmartPrompts(initialPrompts)
+              localStorage.setItem('smart_prompts', JSON.stringify(initialPrompts))
+              setPromptButtons(initialPrompts)
               localStorage.removeItem('chat_history')
-              localStorage.removeItem('smart_prompts')
             }}
             className="text-sm text-blue-600 hover:underline"
           >
@@ -216,15 +220,17 @@ Only use the resume data below, and if something isn’t available, kindly say s
         {/* Regenerate Suggestions Button */}
         {smartPrompts.length > 0 && (
           <div className="flex justify-end mb-2">
-            <button
+          <button
               onClick={() => {
+                setIsRegenerating(true);
                 const regenerated = [...allPromptSuggestions].sort(() => 0.5 - Math.random());
                 setSmartPrompts(regenerated.slice(0, 3));
                 localStorage.setItem('smart_prompts', JSON.stringify(regenerated.slice(0, 3)));
+                setTimeout(() => setIsRegenerating(false), 600);
               }}
               className="text-xs text-blue-600 hover:underline"
             >
-              ↻ Regenerate Suggestions
+              {isRegenerating ? "🔄 Regenerating..." : "↻ Regenerate Suggestions"}
             </button>
           </div>
         )}
