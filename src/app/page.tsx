@@ -34,8 +34,13 @@ export default function Home() {
     if (storedMessages) {
       setMessages(JSON.parse(storedMessages))
     }
-    
-    setPromptButtons([...allPromptSuggestions].sort(() => 0.5 - Math.random()));
+
+    const storedPrompts = localStorage.getItem('smart_prompts');
+    if (storedPrompts) {
+      setSmartPrompts(JSON.parse(storedPrompts));
+    } else {
+      setPromptButtons([...allPromptSuggestions].sort(() => 0.5 - Math.random()));
+    }
 
     const fetchResumeFiles = async () => {
       try {
@@ -105,6 +110,7 @@ export default function Home() {
       filtered.forEach(p => promptHistory.add(p));
       setPromptHistory(new Set(promptHistory));
       setSmartPrompts(filtered);
+      localStorage.setItem('smart_prompts', JSON.stringify(filtered));
     }
   }, [messages, lastTopic]);
 
@@ -199,6 +205,7 @@ Only use the resume data below, and if something isn’t available, kindly say s
               setSmartPrompts([...allPromptSuggestions].sort(() => 0.5 - Math.random()));
               setPromptButtons([...allPromptSuggestions].sort(() => 0.5 - Math.random()))
               localStorage.removeItem('chat_history')
+              localStorage.removeItem('smart_prompts')
             }}
             className="text-sm text-blue-600 hover:underline"
           >
@@ -215,14 +222,23 @@ Only use the resume data below, and if something isn’t available, kindly say s
                            prompt.toLowerCase().includes('experience') ? '📁' :
                            prompt.toLowerCase().includes('ai') ? '🤖' :
                            '💬';
+
+              const tagColor = prompt.toLowerCase().includes('project') ? 'bg-orange-100 text-orange-800' :
+                               prompt.toLowerCase().includes('skill') ? 'bg-green-100 text-green-800' :
+                               prompt.toLowerCase().includes('experience') ? 'bg-purple-100 text-purple-800' :
+                               prompt.toLowerCase().includes('ai') ? 'bg-blue-100 text-blue-800' :
+                               'bg-gray-100 text-gray-800';
+
               return (
                 <button
                   key={i}
                   onClick={() => handlePromptClick(prompt)}
-                  className="border border-blue-200 hover:bg-blue-50 text-sm text-blue-800 px-4 py-3 rounded-xl shadow-sm text-left transition duration-300 ease-in-out transform hover:-translate-y-1 flex gap-2 items-center"
+                  className="border border-blue-200 hover:bg-blue-50 text-sm text-blue-800 px-4 py-3 rounded-xl shadow-sm text-left transition duration-300 ease-in-out transform hover:-translate-y-1 flex justify-between items-center gap-2"
                 >
-                  <span>{icon}</span>
-                  <span>{prompt}</span>
+                  <span className="flex-1">{prompt}</span>
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${tagColor}`}>
+                    {icon}
+                  </span>
                 </button>
               )
             })}
