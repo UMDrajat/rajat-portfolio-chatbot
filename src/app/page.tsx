@@ -289,14 +289,39 @@ Only use the resume data below, and if something isn’t available, kindly say s
           <div ref={bottomRef}></div>
         </div>
 
-        {/* Sticky input box */}
-        <div className="sticky bottom-0 bg-white pt-2 mt-4">
-          <input
-            type="text"
-            placeholder="Ask me something..."
-            onKeyDown={handleInputKeyDown}
-            className="w-full border border-gray-300 rounded-full px-5 py-3 text-sm shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
+        {/* Sticky input with Send + Mic */}
+        <div className="sticky bottom-0 bg-white pt-4 pb-2 mt-4 w-full">
+          <div className="flex items-center gap-2">
+            {/* Mic icon (placeholder) */}
+            <button
+              className="text-xl px-3 py-2 rounded-full hover:bg-gray-200 transition"
+              title="Voice input (coming soon)"
+            >
+              🗣️
+            </button>
+
+            {/* Text input */}
+            <input
+              type="text"
+              placeholder="Ask me something..."
+              onKeyDown={handleInputKeyDown}
+              className="flex-1 border border-gray-300 rounded-full px-5 py-3 text-sm shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+
+            {/* Send button */}
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow"
+              onClick={() => {
+                const input = document.querySelector<HTMLInputElement>('input[type="text"]');
+                if (input?.value.trim()) {
+                  handleUserMessage(input.value.trim());
+                  input.value = '';
+                }
+              }}
+            >
+              Send
+            </button>
+          </div>
         </div>
       </div>
     </main>
