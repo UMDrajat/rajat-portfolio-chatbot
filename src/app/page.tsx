@@ -9,6 +9,8 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [resumeData, setResumeData] = useState<string | null>(null)
   const [smartPrompts, setSmartPrompts] = useState<string[]>([]);
+  const [lastTopic, setLastTopic] = useState<string | null>(null);
+  const [promptHistory, setPromptHistory] = useState<Set<string>>(new Set());
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
   const allPromptSuggestions = [
@@ -67,7 +69,7 @@ export default function Home() {
   }, [messages])
 
   useEffect(() => {
-    if (messages.length === 0) {
+    if (messages.length === 0 || !lastTopic) {
       setSmartPrompts([...allPromptSuggestions].sort(() => 0.5 - Math.random()));
       return;
     }
@@ -76,19 +78,17 @@ export default function Home() {
     if (lastBotMsg.from === 'bot') {
       const suggestions: Set<string> = new Set();
 
-      const text = lastBotMsg.text.toLowerCase();
-
-      if (text.includes('project')) {
+      if (lastTopic.includes('project')) {
         suggestions.add("What challenges did Rajat face in this project?");
         suggestions.add("What tools did he use?");
         suggestions.add("Was this a solo or team effort?");
       }
-      if (text.includes('skills')) {
+      if (lastTopic.includes('skills')) {
         suggestions.add("Which skill is he most confident in?");
         suggestions.add("How did he gain these skills?");
         suggestions.add("Does he have leadership experience?");
       }
-      if (text.includes('experience')) {
+      if (lastTopic.includes('experience')) {
         suggestions.add("Tell me more about his work at Econote.");
         suggestions.add("How long did he work in product management?");
         suggestions.add("Did he manage a team?");
@@ -101,9 +101,12 @@ export default function Home() {
         suggestions.add("How does this relate to AI?");
       }
 
-      setSmartPrompts(Array.from(suggestions).slice(0, 3));
+      const filtered = Array.from(suggestions).filter(s => !promptHistory.has(s)).slice(0, 3);
+      filtered.forEach(p => promptHistory.add(p));
+      setPromptHistory(new Set(promptHistory));
+      setSmartPrompts(filtered);
     }
-  }, [messages]);
+  }, [messages, lastTopic]);
 
   const handlePromptClick = (prompt: string) => {
     handleUserMessage(prompt)
@@ -120,6 +123,7 @@ export default function Home() {
   const handleUserMessage = async (text: string) => {
     setMessages((prev) => [...prev, { from: 'user', text }])
     setUsedPrompts((prev) => [...prev, text])
+    setLastTopic(text.toLowerCase())
     setLoading(true)
     const botReply = await fetchFromOpenRouter(text)
     setMessages((prev) => [...prev, { from: 'bot', text: botReply }])
