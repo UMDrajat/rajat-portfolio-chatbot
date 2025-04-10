@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
+const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || (window as any).webkitSpeechRecognition);
 
 export default function Home() {
   const [messages, setMessages] = useState<{ from: string; text: string }[]>([])
@@ -12,7 +13,30 @@ export default function Home() {
   const [lastTopic, setLastTopic] = useState<string | null>(null);
   const [promptHistory, setPromptHistory] = useState<Set<string>>(new Set());
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [listening, setListening] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null)
+
+  const handleVoiceInput = () => {
+    if (!SpeechRecognition) {
+      alert('Speech recognition is not supported in this browser.');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => setListening(true);
+    recognition.onend = () => setListening(false);
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      handleUserMessage(transcript);
+    };
+
+    recognition.start();
+  };
 
   const allPromptSuggestions = [
     "Show me Rajat's resume summary",
@@ -184,6 +208,20 @@ Only use the resume data below, and if something isn’t available, kindly say s
     }
   }
 
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out;
+      }
+    `;
+    document.head.appendChild(style);
+  }, []);
+
   return (
     <main className="min-h-screen w-full px-8 py-4 flex flex-col items-start justify-between bg-[#f7f9fb]">
       <div className="w-full h-full min-h-[85vh] p-10">
@@ -271,9 +309,9 @@ Only use the resume data below, and if something isn’t available, kindly say s
         {/* Chat messages */}
         <div className="space-y-4 mb-4 max-h-[65vh] overflow-y-auto">
           {messages.map((msg, i) => (
-            <div key={i} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div key={i} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'} animate-fadeIn`}>
               <div className="rounded-xl p-3">
-                <div className={`px-4 py-2 rounded-xl text-sm shadow-sm max-w-[80%] ${
+                <div className={`px-5 py-3 rounded-xl text-sm shadow-lg max-w-[80%] transition-all duration-300 ${
                   msg.from === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'
                 }`}>
                   {msg.text}
@@ -298,8 +336,9 @@ Only use the resume data below, and if something isn’t available, kindly say s
           <div className="flex items-center gap-3 max-w-4xl mx-auto">
             {/* Mic icon with voice-to-text (placeholder) */}
             <button
+              onClick={handleVoiceInput}
               className="text-xl px-3 py-2 rounded-full hover:bg-gray-100 transition"
-              title="Voice input (coming soon)"
+              title="Voice input"
             >
               🎤
             </button>
