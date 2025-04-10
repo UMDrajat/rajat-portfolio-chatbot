@@ -205,11 +205,12 @@ Only use the resume data below, and if something isn’t available, kindly say s
               setUsedPrompts([])
               setLastTopic(null)
               setPromptHistory(new Set())
+              localStorage.removeItem('chat_history')
+              localStorage.removeItem('smart_prompts')
               const initialPrompts = [...allPromptSuggestions].sort(() => 0.5 - Math.random()).slice(0, 3);
               setSmartPrompts(initialPrompts)
-              localStorage.setItem('smart_prompts', JSON.stringify(initialPrompts))
               setPromptButtons(initialPrompts)
-              localStorage.removeItem('chat_history')
+              localStorage.setItem('smart_prompts', JSON.stringify(initialPrompts))
             }}
             className="text-sm text-blue-600 hover:underline"
           >
