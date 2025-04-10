@@ -133,13 +133,20 @@ export default function Home() {
 
 Use this formatting style for all responses:
 - Start with a one-line summary (if applicable)
-- Use bullet points with bold categories where appropriate (e.g., **Leadership**, **Technical Skills**, etc.)
+- For **projects**:
+  - Highlight Rajat's role, tools used, challenges solved, and outcomes
+  - Use bullet points for responsibilities and results
+  - Include timelines if available
+- For **skills**:
+  - Group skills into categories like **Technical**, **Analytical**, **Leadership**
+  - Mention where or how the skills were applied (e.g., in which roles or projects)
+- Use bullet points with bold categories where appropriate
 - Italicize company names, project names, and institutions
 - Format for readability: break content into sections, use line breaks
 - End with a summary line or insight if possible
 - Avoid redundancy; ensure every point adds unique value
 
-Always use the resume data below, and if something isn’t available, kindly say so.\n\nResume:\n${resumeData}`
+Only use the resume data below, and if something isn’t available, kindly say so.\n\nResume:\n${resumeData}`
       : `Hi! I’m Rajat’s portfolio assistant. His resume is still loading. Could you give it a moment and ask again shortly?`
 
     try {
