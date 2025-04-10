@@ -31,6 +31,8 @@ export default function Home() {
       setMessages(JSON.parse(storedMessages))
     }
 
+    promptButtons.sort(() => 0.5 - Math.random())
+
     const fetchResumeFiles = async () => {
       try {
         const values = await Promise.all(
@@ -130,7 +132,7 @@ export default function Home() {
           </div>
           <button
             onClick={() => {
-              setMessages([])
+              setMessages([{ from: 'bot', text: "👋 Welcome to Rajat Nirwan's Portfolio. How can I help you?" }])
               setUsedPrompts([])
               localStorage.removeItem('chat_history')
             }}
@@ -149,7 +151,7 @@ export default function Home() {
                 <button
                   key={i}
                   onClick={() => handlePromptClick(prompt)}
-                  className="border border-blue-200 hover:bg-blue-50 text-sm text-blue-800 px-4 py-3 rounded-xl shadow-sm text-left"
+                  className="border border-blue-200 hover:bg-blue-50 text-sm text-blue-800 px-4 py-3 rounded-xl shadow-sm text-left transition duration-300 ease-in-out transform hover:-translate-y-1"
                 >
                   {prompt}
                 </button>
