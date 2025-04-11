@@ -332,9 +332,15 @@ Resume:\n${resumeData}`
                   msg.from === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'
                 }`}>
                   <div className="prose prose-sm max-w-full">
-                    <ReactMarkdown className="prose prose-sm max-w-full prose-p:leading-relaxed prose-strong:text-blue-800 prose-em:text-gray-600">
-                      {msg.text}
-                    </ReactMarkdown>
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => <p className="leading-relaxed mb-2">{children}</p>,
+                      strong: ({ children }) => <strong className="text-blue-800">{children}</strong>,
+                      em: ({ children }) => <em className="text-gray-600">{children}</em>
+                    }}
+                  >
+                    {msg.text}
+                  </ReactMarkdown>
                   </div>
                 </div>
               </div>
