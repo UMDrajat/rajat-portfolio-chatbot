@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown';
+import SocialLinks from './components/SocialLinks';
 const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || (window as any).webkitSpeechRecognition);
 
 export default function Home() {
