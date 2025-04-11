@@ -4,15 +4,8 @@ import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown';
 import SocialLinks from './components/SocialLinks';
-declare global {
-  interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
-  }
-}
 const SpeechRecognition =
-  typeof window !== 'undefined' &&
-  ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
+  typeof window !== 'undefined'
     ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
     : null;
 
