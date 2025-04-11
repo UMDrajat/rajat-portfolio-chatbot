@@ -55,11 +55,11 @@ export default function Home() {
   const [promptButtons, setPromptButtons] = useState<string[]>([]);
 
   const resumeFiles = {
-    skills: 'https://drive.google.com/uc?export=download&id=1SAPr8ABcL6P6j5F0_98vBMn873X1HaUr',
-    summary: 'https://drive.google.com/uc?export=download&id=1GJGFoy3G4au58lgQSwpMyD-jV-L7YJ_T',
-    projects: 'https://drive.google.com/uc?export=download&id=11NzBkRHn4JuKVmaGd4P2nJ7uXq8MYl8x',
-    experience: 'https://drive.google.com/uc?export=download&id=1GDM40xtkWR_LRq31zr3DhX6aL3SHdzSi',
-    education: 'https://drive.google.com/uc?export=download&id=1zXaaq3CS5a-r8O1qSSiPS_nLSd8cy5l7'
+    skills: 'https://drive.google.com/uc?export=download&id=1B-aoiWTGUB4B1B5tVHKgWNZoT-vGvmVV',
+    summary: 'https://drive.google.com/uc?export=download&id=1JKaj5lX4w06aeapr6J-C8vNzKl2aMS7e',
+    projects: 'https://drive.google.com/uc?export=download&id=105hCJwqikTfZISp7MuAQEOT0qqpRGMsY',
+    experience: 'https://drive.google.com/uc?export=download&id=1wRIMhyGZ5NIL1TGW6cDNG7sSN4Z-PrcC',
+    education: 'https://drive.google.com/uc?export=download&id=13XohxVcZOvGz0Ahxqr4uKfBzgJHjAQWq'
   }
 
   useEffect(() => {
@@ -247,11 +247,12 @@ Only use the resume data below, and if something isn’t available, kindly say s
           </div>
           <div className="flex items-center gap-4">
             <a
-              href="https://drive.google.com/uc?export=download&id=1GJGFoy3G4au58lgQSwpMyD-jV-L7YJ_T"
-              download
+              href="https://drive.google.com/file/d/1sHWo-4a9tdcicEv3xIndemcfnoJRq524/view"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-sm text-blue-600 hover:underline"
             >
-              ⬇️ Download Resume
+              📄 View Resume
             </a>
             <button
               onClick={() => {
