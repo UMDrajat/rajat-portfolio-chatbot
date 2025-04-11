@@ -347,9 +347,11 @@ Only use the resume data below, and if something isn’t available, kindly say s
                 <div className={`px-5 py-3 rounded-xl text-sm shadow-lg max-w-[80%] transition-all duration-300 ${
                   msg.from === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'
                 }`}>
-                  <ReactMarkdown className="prose prose-sm max-w-full">
-                    {msg.text}
-                  </ReactMarkdown>
+                  <div className="prose prose-sm max-w-full">
+                    <ReactMarkdown>
+                      {msg.text}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               </div>
             </div>
