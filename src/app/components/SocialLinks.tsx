@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 interface SocialLinksProps {
-  onNewChat?: () => void;
+  onNewChat: () => void;
 }
 
 const SocialLinks: React.FC<SocialLinksProps> = ({ onNewChat }) => {
@@ -19,15 +19,13 @@ const SocialLinks: React.FC<SocialLinksProps> = ({ onNewChat }) => {
       >
         📄 View Resume
       </a>
-      {onNewChat && (
-        <button
-          onClick={onNewChat}
-          className="text-sm text-blue-600 hover:underline"
-          title="Start a new chat session"
-        >
-          + New Chat
-        </button>
-      )}
+      <button
+        onClick={onNewChat}
+        className="text-sm text-blue-600 hover:underline"
+        title="Start a new chat session"
+      >
+        + New Chat
+      </button>
       <a
         href="https://github.com/UMDrajat?tab=overview&from=2025-04-01&to=2025-04-11"
         target="_blank"

@@ -247,7 +247,20 @@ Only use the resume data below, and if something isn’t available, kindly say s
             />
             <h1 className="text-xl font-semibold text-gray-800">Rajat Nirwan's Portfolio</h1>
           </div>
-          <SocialLinks />
+          <SocialLinks
+            onNewChat={() => {
+              setMessages([{ from: 'bot', text: "👋 Welcome to Rajat Nirwan's Portfolio. How can I help you?" }]);
+              setUsedPrompts([]);
+              setLastTopic(null);
+              setPromptHistory(new Set());
+              localStorage.removeItem('chat_history');
+              localStorage.removeItem('smart_prompts');
+              const initialPrompts = [...allPromptSuggestions].sort(() => 0.5 - Math.random()).slice(0, 3);
+              setSmartPrompts(initialPrompts);
+              setPromptButtons(initialPrompts);
+              localStorage.setItem('smart_prompts', JSON.stringify(initialPrompts));
+            }}
+          />
         </div>
 
         {/* Regenerate Suggestions Button */}
