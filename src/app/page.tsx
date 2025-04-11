@@ -49,10 +49,16 @@ export default function Home() {
   };
 
   const allPromptSuggestions = [
-    "Show me Rajat's resume summary",
-    "What are his top skills?",
-    "Tell me about one of his projects",
-    "Does he have AI/ML experience?"
+    "What makes Rajat stand out?",
+    "Give me a sneak peek into his skills ✨",
+    "What’s one cool project he's worked on?",
+    "How does he handle challenges?",
+    "What’s his leadership style like? 👨‍💼",
+    "Is he experienced with AI or data?",
+    "Can you summarize his experience quickly?",
+    "What's something unique about his background?",
+    "Any fun facts or achievements worth sharing?",
+    "Why would Rajat be a great fit for a product/data role?"
   ];
   const [promptButtons, setPromptButtons] = useState<string[]>([]);
 
@@ -326,7 +332,7 @@ Resume:\n${resumeData}`
                   msg.from === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'
                 }`}>
                   <div className="prose prose-sm max-w-full">
-                    <ReactMarkdown>
+                    <ReactMarkdown className="prose prose-sm max-w-full prose-p:leading-relaxed prose-strong:text-blue-800 prose-em:text-gray-600">
                       {msg.text}
                     </ReactMarkdown>
                   </div>
