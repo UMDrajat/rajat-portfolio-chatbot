@@ -4,7 +4,17 @@ import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown';
 import SocialLinks from './components/SocialLinks';
-const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || (window as any).webkitSpeechRecognition);
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
+}
+const SpeechRecognition =
+  typeof window !== 'undefined' &&
+  ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)
+    ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    : null;
 
 export default function Home() {
   const [messages, setMessages] = useState<{ from: string; text: string }[]>([])
