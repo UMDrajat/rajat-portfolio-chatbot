@@ -246,47 +246,7 @@ Only use the resume data below, and if something isn’t available, kindly say s
             />
             <h1 className="text-xl font-semibold text-gray-800">Rajat Nirwan's Portfolio</h1>
           </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="https://drive.google.com/file/d/1sHWo-4a9tdcicEv3xIndemcfnoJRq524/view"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:underline"
-            >
-              📄 View Resume
-            </a>
-            <button
-              onClick={() => {
-                setMessages([{ from: 'bot', text: "👋 Welcome to Rajat Nirwan's Portfolio. How can I help you?" }])
-                setUsedPrompts([])
-                setLastTopic(null)
-                setPromptHistory(new Set())
-                localStorage.removeItem('chat_history')
-                localStorage.removeItem('smart_prompts')
-                const initialPrompts = [...allPromptSuggestions].sort(() => 0.5 - Math.random()).slice(0, 3);
-                setSmartPrompts(initialPrompts)
-                setPromptButtons(initialPrompts)
-                localStorage.setItem('smart_prompts', JSON.stringify(initialPrompts))
-              }}
-              className="text-sm text-blue-600 hover:underline"
-            >
-              + New Chat
-            </button>
-            <a
-              href="https://github.com/UMDrajat?tab=overview&from=2025-04-01&to=2025-04-11"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="View GitHub Profile"
-            >
-              <Image
-                src="/github-mark.svg"
-                alt="GitHub"
-                width={24}
-                height={24}
-                className="hover:opacity-80 transition"
-              />
-            </a>
-          </div>
+          <SocialLinks />
         </div>
 
         {/* Regenerate Suggestions Button */}
