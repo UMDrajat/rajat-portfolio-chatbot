@@ -181,7 +181,7 @@ export default function Home() {
   }
 
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
-    const apiKey = process.env.OPENROUTER_API_KEY
+    const apiKey = process.env.NEXT_PUBLIC_OPENROUTER_API_KEY
     const systemPrompt = resumeData
       ? `You're Rajat Nirwan’s friendly portfolio assistant. You should always:
  - Think before answering
