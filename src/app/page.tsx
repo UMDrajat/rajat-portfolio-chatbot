@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
+import ReactMarkdown from 'react-markdown';
 const SpeechRecognition = typeof window !== 'undefined' && (window.SpeechRecognition || (window as any).webkitSpeechRecognition);
 
 export default function Home() {
@@ -271,6 +272,20 @@ Only use the resume data below, and if something isn’t available, kindly say s
             >
               + New Chat
             </button>
+            <a
+              href="https://github.com/UMDrajat?tab=overview&from=2025-04-01&to=2025-04-11"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="View GitHub Profile"
+            >
+              <Image
+                src="/github-mark.svg"
+                alt="GitHub"
+                width={24}
+                height={24}
+                className="hover:opacity-80 transition"
+              />
+            </a>
           </div>
         </div>
 
@@ -332,7 +347,9 @@ Only use the resume data below, and if something isn’t available, kindly say s
                 <div className={`px-5 py-3 rounded-xl text-sm shadow-lg max-w-[80%] transition-all duration-300 ${
                   msg.from === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'
                 }`}>
-                  {msg.text}
+                  <ReactMarkdown className="prose prose-sm max-w-full">
+                    {msg.text}
+                  </ReactMarkdown>
                 </div>
               </div>
             </div>
