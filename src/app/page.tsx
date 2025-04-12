@@ -1,9 +1,6 @@
 'use client'
 
-import Image from 'next/image'
-import { useState, useEffect, useRef } from 'react'
-import ReactMarkdown from 'react-markdown';
-import SocialLinks from './components/SocialLinks';
+import { useState, useEffect, useRef } from 'react';
 const SpeechRecognition = typeof window !== 'undefined'
   ? (window as typeof window & {
       webkitSpeechRecognition?: typeof window.SpeechRecognition;
@@ -11,58 +8,15 @@ const SpeechRecognition = typeof window !== 'undefined'
     }).SpeechRecognition || (window as typeof window & { webkitSpeechRecognition?: typeof window.SpeechRecognition }).webkitSpeechRecognition
   : undefined;
 
-// @ts-ignore
+// @ts-expect-error
 interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
 }
 
 export default function Home() {
-  const [pageLoading, setPageLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setPageLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
-
   const [messages, setMessages] = useState<{ from: string; text: string }[]>([])
-  const [loading, setLoading] = useState(false)
   const [resumeData, setResumeData] = useState<string | null>(null)
-  const [lastTopic, setLastTopic] = useState<string | null>(null);
-  const [isRegenerating, setIsRegenerating] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null)
-
-  const handleVoiceInput = () => {
-    if (!SpeechRecognition) {
-      alert('Speech recognition is not supported in this browser.');
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
-
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript;
-      handleUserMessage(transcript);
-      recognition.stop();
-    };
-
-    recognition.start();
-  };
-
-  const allPromptSuggestions = [
-    "What makes Rajat stand out?",
-    "Give me a sneak peek into his skills ✨",
-    "What’s one cool project he's worked on?",
-    "How does he handle challenges?",
-    "What’s his leadership style like? 👨‍💼",
-    "Is he experienced with AI or data?",
-    "Can you summarize his experience quickly?",
-    "What's something unique about his background?",
-    "Any fun facts or achievements worth sharing?",
-    "Why would Rajat be a great fit for a product/data role?"
-  ];
 
   const resumeFiles = {
     skills: 'https://drive.google.com/uc?export=download&id=1B-aoiWTGUB4B1B5tVHKgWNZoT-vGvmVV',
@@ -102,7 +56,7 @@ export default function Home() {
     }
 
     fetchResumeFiles()
-  }, [])
+  }, [resumeFiles])
 
   useEffect(() => {
     localStorage.setItem('chat_history', JSON.stringify(messages))
@@ -111,11 +65,8 @@ export default function Home() {
 
   const handleUserMessage = async (text: string) => {
     setMessages((prev) => [...prev, { from: 'user', text }])
-    setLastTopic(text.toLowerCase())
-    setLoading(true)
     const botReply = await fetchFromOpenRouter(text)
     setMessages((prev) => [...prev, { from: 'bot', text: botReply }])
-    setLoading(false)
   }
 
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
