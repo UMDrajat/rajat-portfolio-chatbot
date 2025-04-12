@@ -103,12 +103,12 @@ export default function Home() {
     }
 
     fetchResumeFiles()
-  }, [])
+  }, [resumeFiles])
 
   useEffect(() => {
     localStorage.setItem('chat_history', JSON.stringify(messages))
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, allPromptSuggestions])
 
   const handleUserMessage = async (text: string) => {
     setMessages((prev) => [...prev, { from: 'user', text }])
@@ -120,10 +120,6 @@ export default function Home() {
   }
 
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
-    const systemPrompt = resumeData
-      ? `You're Rajat Nirwan’s friendly portfolio assistant. Resume:\n${resumeData}`
-      : `Hi! I’m Rajat’s portfolio assistant. His resume is still loading.`
-
     try {
       const res = await fetch('/api/openrouter', {
         method: 'POST',
