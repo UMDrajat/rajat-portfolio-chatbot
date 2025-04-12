@@ -12,6 +12,12 @@ const SpeechRecognition = typeof window !== 'undefined'
   : undefined;
 
 export default function Home() {
+  const [pageLoading, setPageLoading] = useState(true);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setPageLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
   const [messages, setMessages] = useState<{ from: string; text: string }[]>([])
   const [usedPrompts, setUsedPrompts] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
@@ -214,9 +220,10 @@ Resume:\n${resumeData}`
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
+      body: JSON.stringify({
           message: userMessage,
-          resumeData
+          resumeData,
+          model: "mistralai/mistral-7b-instruct"
         })
       });
 
@@ -256,6 +263,18 @@ Resume:\n${resumeData}`
     `;
     document.head.appendChild(style);
   }, []);
+
+  if (pageLoading) {
+    return (
+      <main className="min-h-screen w-full flex items-center justify-center bg-white">
+        <div className="text-center">
+          <p className="text-lg font-semibold text-gray-700 animate-pulse">
+            👋 Welcome to Rajat Nirwan’s Portfolio...
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen w-full px-8 py-4 flex flex-col items-start justify-between bg-[#f7f9fb]">
@@ -381,7 +400,7 @@ Resume:\n${resumeData}`
             className="flex-1 border border-gray-300 rounded-full px-5 py-3 text-sm shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <button
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow transition"
+            className="bg-gray-200 hover:bg-gray-300 text-black px-4 py-2 rounded-full text-sm font-medium shadow transition"
             onClick={handleVoiceInput}
             title="Use voice input"
           >
