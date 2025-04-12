@@ -243,6 +243,16 @@ Resume:\n${resumeData}`
       .animate-fadeIn {
         animation: fadeIn 0.3s ease-out;
       }
+      .dot-flash::after {
+        content: '...';
+        animation: dots 1s steps(3, end) infinite;
+      }
+      @keyframes dots {
+        0% { content: ''; }
+        33% { content: '.'; }
+        66% { content: '..'; }
+        100% { content: '...'; }
+      }
     `;
     document.head.appendChild(style);
   }, []);
@@ -354,9 +364,8 @@ Resume:\n${resumeData}`
           {loading && (
             <div className="flex justify-start animate-fadeIn">
               <div className="rounded-xl p-3">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl max-w-xs bg-yellow-100 text-yellow-900 shadow">
-                  <span className="animate-spin h-4 w-4 border-2 border-t-2 border-yellow-400 rounded-full"></span>
-                  <span>Hang tight, I’m cooking up a great response...</span>
+                <div className="px-5 py-3 rounded-xl text-sm shadow-lg max-w-[80%] bg-gray-200 text-black">
+                  <span className="dot-flash text-gray-600">Typing</span>
                 </div>
               </div>
             </div>
@@ -364,52 +373,32 @@ Resume:\n${resumeData}`
           <div ref={bottomRef}></div>
         </div>
 
-        {/* Sticky input with Send + Mic */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-4 px-6 shadow-lg z-50">
-          <div className="flex items-center gap-3 max-w-4xl mx-auto">
-            {/* Mic icon with voice-to-text (placeholder) */}
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handleVoiceInput}
-                className="text-xl px-3 py-2 rounded-full hover:bg-gray-100 transition"
-                title="Voice input"
-              >
-                🎤
-              </button>
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                className="text-xs border border-gray-300 rounded px-2 py-1 bg-white shadow"
-              >
-                <option value="en-US">🇺🇸 English</option>
-                <option value="hi-IN">🇮🇳 Hindi</option>
-                <option value="es-ES">🇪🇸 Spanish</option>
-                <option value="fr-FR">🇫🇷 French</option>
-              </select>
-            </div>
-
-            {/* Text input */}
-            <input
-              type="text"
-              placeholder="Ask me something..."
-              onKeyDown={handleInputKeyDown}
-              className="flex-1 border border-gray-300 rounded-full px-5 py-3 text-sm shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-
-            {/* Send button */}
-            <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow transition"
-              onClick={() => {
-                const input = document.querySelector<HTMLInputElement>('input[type="text"]');
-                if (input?.value.trim()) {
-                  handleUserMessage(input.value.trim());
-                  input.value = '';
-                }
-              }}
-            >
-              Send
-            </button>
-          </div>
+        <div className="flex items-center gap-3 mt-6">
+          <input
+            type="text"
+            placeholder="Ask me something..."
+            onKeyDown={handleInputKeyDown}
+            className="flex-1 border border-gray-300 rounded-full px-5 py-3 text-sm shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <button
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow transition"
+            onClick={handleVoiceInput}
+            title="Use voice input"
+          >
+            🎙️
+          </button>
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow transition"
+            onClick={() => {
+              const input = document.querySelector<HTMLInputElement>('input[type="text"]');
+              if (input?.value.trim()) {
+                handleUserMessage(input.value.trim());
+                input.value = '';
+              }
+            }}
+          >
+            Send
+          </button>
         </div>
       </div>
     </main>
