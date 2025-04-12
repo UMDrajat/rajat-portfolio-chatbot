@@ -14,10 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: 'API key not found in env.' });
   }
 
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
 
+  try {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -33,8 +33,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }),
       signal: controller.signal,
     });
-
-    clearTimeout(timeout);
 
     const raw = await response.text();
 
@@ -62,5 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(504).json({ error: 'Request to OpenRouter timed out.' });
     }
     return res.status(500).json({ error: 'Failed to fetch from OpenRouter' });
+  } finally {
+    clearTimeout(timeout);
   }
 }

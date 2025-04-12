@@ -352,10 +352,11 @@ Resume:\n${resumeData}`
             </div>
           ))}
           {loading && (
-            <div className="flex justify-start">
+            <div className="flex justify-start animate-fadeIn">
               <div className="rounded-xl p-3">
-                <div className="px-4 py-2 rounded-xl max-w-xs bg-gray-200 text-black animate-pulse">
-                  Typing...
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl max-w-xs bg-yellow-100 text-yellow-900 shadow">
+                  <span className="animate-spin h-4 w-4 border-2 border-t-2 border-yellow-400 rounded-full"></span>
+                  <span>Hang tight, I’m cooking up a great response...</span>
                 </div>
               </div>
             </div>
