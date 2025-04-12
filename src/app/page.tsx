@@ -11,6 +11,11 @@ const SpeechRecognition = typeof window !== 'undefined'
     }).SpeechRecognition || (window as typeof window & { webkitSpeechRecognition?: typeof window.SpeechRecognition }).webkitSpeechRecognition
   : undefined;
 
+// @ts-ignore
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+}
+
 export default function Home() {
   const [pageLoading, setPageLoading] = useState(true);
 
@@ -37,7 +42,7 @@ export default function Home() {
     recognition.interimResults = false;
     recognition.lang = 'en-US';
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       const transcript = event.results[0][0].transcript;
       handleUserMessage(transcript);
       recognition.stop();
