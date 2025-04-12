@@ -27,18 +27,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           ],
         }),
       });
-  
+
+      const text = await response.text();
+
       if (!response.ok) {
-          const errorText = await response.text();
-          return res.status(response.status).json({ error: `OpenRouter API error: ${errorText}` });
+        console.error('OpenRouter API error:', text);
+        return res.status(response.status).json({ error: text });
       }
 
       let data;
       try {
-          data = await response.json();
+        data = JSON.parse(text);
       } catch (jsonError) {
-          const fallbackText = await response.text();
-          return res.status(response.status).json({ error: `Failed to parse JSON: ${fallbackText}` });
+        console.error('Failed to parse JSON:', text);
+        return res.status(500).json({ error: `Invalid JSON: ${text}` });
       }
 
       return res.status(200).json({ result: data.choices?.[0]?.message?.content || 'No response' });
