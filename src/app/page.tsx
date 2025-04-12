@@ -181,7 +181,6 @@ export default function Home() {
   }
 
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
-    const apiKey = process.env.OPENROUTER_API_KEY
     const systemPrompt = resumeData
       ? `You're Rajat Nirwan’s friendly portfolio assistant. You should always:
  - Think before answering
@@ -208,28 +207,24 @@ Resume:\n${resumeData}`
       : `Hi! I’m Rajat’s portfolio assistant. His resume is still loading. Could you give it a moment and ask again shortly?`
 
     try {
-      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      const res = await fetch('/api/openrouter', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'meta-llama/llama-3-70b-instruct',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userMessage }
-          ]
+          message: userMessage,
+          resumeData
         })
-      })
+      });
 
-      const data = await res.json()
-      return data.choices?.[0]?.message?.content || '❌ Sorry, no response.'
+      const data = await res.json();
+      return data.text || '❌ Sorry, no response.';
     } catch (error) {
-      console.error('OpenRouter API error:', error)
-      return '⚠️ Failed to get response.'
+      console.error('OpenRouter API error:', error);
+      return '⚠️ Failed to get response.';
     }
-  }
+  };
 
   useEffect(() => {
     const style = document.createElement('style');
