@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: `
               default-src 'self';
-              script-src 'self' 'unsafe-inline' 'strict-dynamic' https://cdn.vercel-insights.com https://www.googletagmanager.com;
+              script-src 'self' 'unsafe-inline' https://cdn.vercel-insights.com https://www.googletagmanager.com;
               style-src 'self' 'unsafe-inline';
               font-src 'self' https: data:;
               connect-src *;
