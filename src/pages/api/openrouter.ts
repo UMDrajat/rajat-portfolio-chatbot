@@ -28,7 +28,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }),
       });
   
-      const data = await response.json();
+      if (!response.ok) {
+          const errorText = await response.text();
+          return res.status(response.status).json({ error: `OpenRouter API error: ${errorText}` });
+      }
+
+      let data;
+      try {
+          data = await response.json();
+      } catch (jsonError) {
+          const fallbackText = await response.text();
+          return res.status(response.status).json({ error: `Failed to parse JSON: ${fallbackText}` });
+      }
+
       return res.status(200).json({ result: data.choices?.[0]?.message?.content || 'No response' });
     } catch (error) {
       console.error('🔴 OpenRouter Error:', error);
