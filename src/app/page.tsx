@@ -4,10 +4,12 @@ import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown';
 import SocialLinks from './components/SocialLinks';
-const SpeechRecognition =
-  typeof window !== 'undefined'
-    ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-    : null;
+const SpeechRecognition = typeof window !== 'undefined'
+  ? (window as typeof window & {
+      webkitSpeechRecognition?: typeof window.SpeechRecognition;
+      SpeechRecognition?: typeof window.SpeechRecognition;
+    }).SpeechRecognition || (window as typeof window & { webkitSpeechRecognition?: typeof window.SpeechRecognition }).webkitSpeechRecognition
+  : undefined;
 
 export default function Home() {
   const [messages, setMessages] = useState<{ from: string; text: string }[]>([])
@@ -218,8 +220,13 @@ Resume:\n${resumeData}`
         })
       });
 
-      const data = await res.json();
-      return data.text || '❌ Sorry, no response.';
+      const raw = await res.text();
+      try {
+        const data = JSON.parse(raw);
+        return data.text || '❌ Sorry, no response.';
+      } catch {
+        return '❌ Could not parse response.';
+      }
     } catch (error) {
       console.error('OpenRouter API error:', error);
       return '⚠️ Failed to get response.';
