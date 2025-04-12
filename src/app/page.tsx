@@ -37,7 +37,7 @@ export default function Home() {
     recognition.interimResults = false;
     recognition.lang = 'en-US';
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
+    recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
       handleUserMessage(transcript);
       recognition.stop();
@@ -97,12 +97,12 @@ export default function Home() {
     }
 
     fetchResumeFiles()
-  }, [resumeFiles])
+  }, [])
 
   useEffect(() => {
     localStorage.setItem('chat_history', JSON.stringify(messages))
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, allPromptSuggestions])
+  }, [messages])
 
   const handleUserMessage = async (text: string) => {
     setMessages((prev) => [...prev, { from: 'user', text }])
