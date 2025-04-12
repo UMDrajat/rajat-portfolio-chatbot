@@ -9,7 +9,7 @@ interface ChatRequest {
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   if (req.method !== 'POST') {
     res.setHeader('Content-Type', 'application/json');
-    return res.status(405).json({ error: 'Method Not Allowed' });
+    return res.status(405).json({ success: false, error: 'Method Not Allowed' });
   }
 
   const { message, resumeData, model } = req.body as ChatRequest;
@@ -17,11 +17,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!apiKey) {
     res.setHeader('Content-Type', 'application/json');
-    return res.status(500).json({ error: 'API key not found in env.' });
+    return res.status(500).json({ success: false, error: 'API key not found in env.' });
   }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log("Calling OpenRouter with:", { model, message });
+  }
 
   try {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -47,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error('OpenRouter API error:', raw);
       }
       res.setHeader('Content-Type', 'application/json');
-      return res.status(response.status).json({ error: raw });
+      return res.status(response.status).json({ success: false, error: raw });
     }
 
     let data;
@@ -56,25 +60,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } catch {
       console.error('Failed to parse JSON:', raw);
       res.setHeader('Content-Type', 'application/json');
-      return res.status(500).json({ error: `Invalid JSON: ${raw}` });
+      return res.status(500).json({ success: false, error: `Invalid JSON: ${raw}` });
     }
 
     res.setHeader('Content-Type', 'application/json');
     return res.status(200).json({
+      success: true,
       result: data.choices?.[0]?.message?.content || 'No response',
       usage: data.usage || null
     });
   } catch (error: unknown) {
+    res.setHeader('Content-Type', 'application/json');
+
     if (error instanceof Error) {
       console.error('🔴 OpenRouter Error:', error.message);
-    } else {
-      console.error('🔴 OpenRouter Error:', error);
+      if (error.name === 'AbortError') {
+        return res.status(504).json({ success: false, error: 'Request to OpenRouter timed out.' });
+      }
+      return res.status(500).json({ success: false, error: error.message });
     }
-    res.setHeader('Content-Type', 'application/json');
-    if (error.name === 'AbortError') {
-      return res.status(504).json({ error: 'Request to OpenRouter timed out.' });
-    }
-    return res.status(500).json({ error: 'Failed to fetch from OpenRouter' });
+
+    console.error('🔴 Unknown OpenRouter Error:', error);
+    return res.status(500).json({ success: false, error: 'Failed to fetch from OpenRouter' });
   } finally {
     clearTimeout(timeout);
   }
