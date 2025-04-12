@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let data;
     try {
       data = JSON.parse(raw);
-    } catch (err) {
+    } catch {
       console.error('Failed to parse JSON:', raw);
       res.setHeader('Content-Type', 'application/json');
       return res.status(500).json({ error: `Invalid JSON: ${raw}` });
@@ -53,8 +53,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     res.setHeader('Content-Type', 'application/json');
     return res.status(200).json({ result: data.choices?.[0]?.message?.content || 'No response' });
-  } catch (error: any) {
-    console.error('🔴 OpenRouter Error:', error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('🔴 OpenRouter Error:', error.message);
+    } else {
+      console.error('🔴 OpenRouter Error:', error);
+    }
     res.setHeader('Content-Type', 'application/json');
     if (error.name === 'AbortError') {
       return res.status(504).json({ error: 'Request to OpenRouter timed out.' });
