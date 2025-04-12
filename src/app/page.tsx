@@ -102,12 +102,12 @@ export default function Home() {
     }
 
     fetchResumeFiles()
-  }, [])
+  }, [allPromptSuggestions, resumeFiles])
 
   useEffect(() => {
     localStorage.setItem('chat_history', JSON.stringify(messages))
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, allPromptSuggestions])
 
   const handleUserMessage = async (text: string) => {
     setMessages((prev) => [...prev, { from: 'user', text }])
