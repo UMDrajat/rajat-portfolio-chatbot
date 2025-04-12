@@ -1,12 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+interface ChatRequest {
+  message: string;
+  resumeData?: string;
+  model?: string;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   if (req.method !== 'POST') {
     res.setHeader('Content-Type', 'application/json');
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { message, resumeData } = req.body;
+  const { message, resumeData, model } = req.body as ChatRequest;
   const apiKey = process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
@@ -25,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'meta-llama/llama-3-70b-instruct',
+        model: model || 'meta-llama/llama-3-70b-instruct',
         messages: [
           { role: 'system', content: resumeData || 'Default prompt' },
           { role: 'user', content: message }
@@ -37,7 +43,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const raw = await response.text();
 
     if (!response.ok) {
-      console.error('OpenRouter API error:', raw);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('OpenRouter API error:', raw);
+      }
       res.setHeader('Content-Type', 'application/json');
       return res.status(response.status).json({ error: raw });
     }
@@ -52,7 +60,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     res.setHeader('Content-Type', 'application/json');
-    return res.status(200).json({ result: data.choices?.[0]?.message?.content || 'No response' });
+    return res.status(200).json({
+      result: data.choices?.[0]?.message?.content || 'No response',
+      usage: data.usage || null
+    });
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error('🔴 OpenRouter Error:', error.message);
