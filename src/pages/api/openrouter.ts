@@ -13,6 +13,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { message, resumeData, model } = req.body as ChatRequest;
+
+  if (!message) {
+    return res.status(400).json({ success: false, error: 'Missing user message.' });
+  }
+
   const apiKey = process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
@@ -63,10 +68,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ success: false, error: `Invalid JSON: ${raw}` });
     }
 
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ OpenRouter result:', data.choices?.[0]?.message?.content);
+    }
+
     res.setHeader('Content-Type', 'application/json');
     return res.status(200).json({
       success: true,
-      result: data.choices?.[0]?.message?.content || 'No response',
+      text: data.choices?.[0]?.message?.content || 'No response',
       usage: data.usage || null
     });
   } catch (error: unknown) {
