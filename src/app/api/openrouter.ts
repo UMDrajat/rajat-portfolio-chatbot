@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     const { message, resumeData } = req.body;
     const apiKey = process.env.OPENROUTER_API_KEY;
   
@@ -30,4 +30,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.error('🔴 OpenRouter Error:', error);
       return res.status(500).json({ error: 'Failed to fetch from OpenRouter' });
     }
-  }
+}
