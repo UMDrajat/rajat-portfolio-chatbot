@@ -22,7 +22,6 @@ export default function Home() {
   const [messages, setMessages] = useState<{ from: string; text: string }[]>([])
   const [loading, setLoading] = useState(false)
   const [resumeData, setResumeData] = useState<string | null>(null)
-  const [smartPrompts, setSmartPrompts] = useState<string[]>([]);
   const [lastTopic, setLastTopic] = useState<string | null>(null);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null)
@@ -103,12 +102,12 @@ export default function Home() {
     }
 
     fetchResumeFiles()
-  }, [resumeFiles])
+  }, [])
 
   useEffect(() => {
     localStorage.setItem('chat_history', JSON.stringify(messages))
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, allPromptSuggestions])
+  }, [messages])
 
   const handleUserMessage = async (text: string) => {
     setMessages((prev) => [...prev, { from: 'user', text }])
