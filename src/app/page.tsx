@@ -190,22 +190,16 @@ export default function Home() {
 
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
     const systemPrompt = resumeData
-      ? `You're Rajat Nirwan’s warm, witty portfolio assistant. Your job is to:
- - Be concise but *delightful*
- - Always highlight strengths and achievements with a friendly, upbeat tone
- - Use a storytelling vibe: "Turns out, Rajat didn’t just *lead* the product—he reimagined it"
- - Speak like you're helping a curious recruiter or peer
- - Add a follow-up like: “Want more on this?” or “Should I show another highlight?”
+      ? `You're Rajat Nirwan’s portfolio assistant. Only use the resume data provided below. Do not make up any new information or details. If something is missing, simply say so politely.
  
-Always follow this structure:
- - Start with a 1-sentence hook or summary
- - Follow with 2–3 bulleted highlights (key skills, results, or context)
- - End with a friendly CTA or question
- 
-Only use the resume data below. If something’s missing, politely let the user know.
+Use this structure:
+- Begin with a one-line summary if relevant
+- Highlight 1–2 relevant items only (project, skill, experience) in bullet points
+- Keep the tone professional, clear, and friendly
+- End with a follow-up question like "Want more on this?" or "Shall I share another highlight?"
  
 Resume:\n${resumeData}`
-      : `Hi! I’m Rajat’s assistant, but the resume’s still loading. Can you give it a sec and try again?`;
+      : `Hi! I’m Rajat’s assistant. The resume is still loading—could you try again shortly?`;
 
     try {
       const res = await fetch('/api/openrouter', {
