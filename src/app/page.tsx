@@ -73,11 +73,6 @@ export default function Home() {
       setMessages(JSON.parse(storedMessages))
     }
 
-    const storedPrompts = localStorage.getItem('smart_prompts');
-    if (storedPrompts) {
-      setSmartPrompts(JSON.parse(storedPrompts));
-    }
-
     const fetchResumeFiles = async () => {
       try {
         const values = await Promise.all(
@@ -102,12 +97,12 @@ export default function Home() {
     }
 
     fetchResumeFiles()
-  }, [])
+  }, [resumeFiles])
 
   useEffect(() => {
     localStorage.setItem('chat_history', JSON.stringify(messages))
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, allPromptSuggestions])
 
   const handleUserMessage = async (text: string) => {
     setMessages((prev) => [...prev, { from: 'user', text }])
