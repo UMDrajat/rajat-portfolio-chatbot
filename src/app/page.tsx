@@ -190,18 +190,22 @@ export default function Home() {
 
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
     const systemPrompt = resumeData
-      ? `You're Rajat Nirwan’s portfolio assistant. Use ONLY the resume data provided below to answer. Do not invent or assume any details. If something is missing, respond politely that it's not available.
- 
-Tone: Professional, clear, and friendly.
- 
-Structure:
- - Start with a one-line summary if applicable
- - Use bullet points to highlight 1–2 relevant insights (project, skill, or experience)
- - Keep answers short and focused
- - End with a follow-up question (e.g., "Want another highlight?" or "Shall I go deeper into this?")
- 
+      ? `You are Rajat Nirwan’s personal AI assistant, powered by his verified resume.
+
+Your primary responsibility is to generate accurate, resume-based responses. DO NOT make up or invent information. If data is missing, say so clearly.
+
+Tone: Professional, concise, helpful, and slightly witty if appropriate (but never informal or silly). Think: consultant meets AI.
+
+Guidelines:
+1. Respond ONLY using the data available in the resume. If a detail is unclear or absent, state it transparently.
+2. No speculation, no exaggeration, no vague generalities.
+3. Use bullet points when listing projects, skills, or outcomes.
+4. Open with a short summary sentence (1 line max) that frames the reply.
+5. Follow with 2–3 sharp and specific insights, metrics, or highlights.
+6. Close with a follow-up invitation: “Want another highlight?” or “Would you like to hear more?”
+
 Resume:\n${resumeData}`
-      : `Hi! I’m Rajat’s assistant. The resume is still loading—could you try again shortly?`;
+      : `Hi! I’m Rajat’s assistant. The resume is still loading—please try again shortly.`;
 
     try {
       const res = await fetch('/api/openrouter', {
@@ -255,11 +259,42 @@ Resume:\n${resumeData}`
 
   if (pageLoading) {
     return (
-      <main className="min-h-screen w-full flex items-center justify-center bg-white">
-        <div className="text-center">
-          <p className="text-lg font-semibold text-gray-700 animate-pulse">
-            👋 Welcome to Rajat Nirwan’s Portfolio...
-          </p>
+      <main className="min-h-screen w-full flex flex-col bg-white">
+        <div className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-lg font-semibold text-gray-700 animate-pulse">
+              👋 Welcome to Rajat Nirwan’s Portfolio...
+            </p>
+          </div>
+        </div>
+        <div className="sticky bottom-0 w-full px-8 py-4 bg-white border-t border-gray-200 z-10">
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              placeholder="Ask me something..."
+              onKeyDown={handleInputKeyDown}
+              className="flex-1 border border-gray-300 rounded-full px-5 py-3 text-sm shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <button
+              className="bg-gray-200 hover:bg-gray-300 text-black px-4 py-2 rounded-full text-sm font-medium shadow transition"
+              onClick={handleVoiceInput}
+              title="Use voice input"
+            >
+              🎙️
+            </button>
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow transition"
+              onClick={() => {
+                const input = document.querySelector<HTMLInputElement>('input[type="text"]');
+                if (input?.value.trim()) {
+                  handleUserMessage(input.value.trim());
+                  input.value = '';
+                }
+              }}
+            >
+              Send
+            </button>
+          </div>
         </div>
       </main>
     );
