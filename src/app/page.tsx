@@ -225,7 +225,7 @@ export default function Home() {
       body: JSON.stringify({
           message: userMessage,
           resumeData,
-          model: "mistralai/mistral-7b-instruct",
+          model: "meta-llama/llama-3-70b-instruct",
           max_tokens: 300,
           temperature: 0.2
         })
