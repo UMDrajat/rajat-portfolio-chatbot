@@ -188,32 +188,41 @@ export default function Home() {
     /Rajat.*?(GPT|LLM|Transformer|company that isn't in resume|co-founded.*?(OpenAI|Google))/i.test(response);
   
   const filteredReply = isHallucinated(botReply)
-    ? "⚠️ This part of the response seems unrelated to Rajat’s resume. Let’s stick to verified content. Want to ask something else?"
+    ? "That part might not be in Rajat’s verified resume, so I can't confirm it. Would you like to download his actual resume instead?"
     : botReply;
   
+  if (/download.*resume/i.test(text)) {
+    setMessages(prev => [...prev, {
+      from: 'bot',
+      text: `Sure! Here's the link to download Rajat's resume summary:\n\n[Download Resume](https://drive.google.com/uc?export=download&id=1JKaj5lX4w06aeapr6J-C8vNzKl2aMS7e)`
+    }]);
+    setLoading(false);
+    return;
+  }
+
   setMessages((prev) => [...prev, { from: 'bot', text: filteredReply }])
-    setLoading(false)
+  setLoading(false)
   }
 
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
-  const systemPrompt = resumeData
+const systemPrompt = resumeData
     ? `You are Rajat Nirwan’s AI assistant. Your ONLY knowledge source is the resume provided below.
  
- ⚠️ Strict Instructions:
- - NEVER guess, fabricate, or assume facts.
- - If information is not in the resume, reply with: "This information isn’t available in the current resume."
- - Do NOT mention technologies, achievements, or roles unless they are in the resume.
- - Avoid repeating phrases like “Rajat has experience with...” unless it's backed by resume content.
+⚠️ STRICT INSTRUCTIONS:
+- You MUST NOT fabricate, exaggerate, or infer any facts that are not explicitly mentioned in the resume.
+- Never assume roles, technologies, or achievements.
+- Do not repeat vague claims like “Rajat is experienced with…” unless it is supported by resume content.
+- If unsure, respond with: “This information isn’t available in the current resume.”
  
- 📌 Tone: Professional, insightful, concise, and confident. Do NOT be casual, funny, or speculative.
+✅ RESPONSE FORMAT:
+1. A one-line summary (based only on resume facts).
+2. 2–3 bullet points highlighting specific verified achievements, skills, or experiences.
+3. Conclude with: “Want to explore another part of his background?”
  
- ✅ Output Structure:
- 1. One-line summary (contextual or reflective)
- 2. 2–3 bullet points with specific skills, metrics, or experience backed by the resume
- 3. End with: “Want to explore another part of his background?”
+🗣️ Tone: Professional, confident, clear. No humor. No speculation.
  
- 🔒 Resume Data:
- ${resumeData}`
+📄 Resume Data:
+${resumeData}`
     : `Resume not yet loaded. Please try again shortly.`;
 
     try {
