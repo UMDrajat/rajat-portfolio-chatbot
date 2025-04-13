@@ -12,10 +12,10 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: `
               default-src 'self';
-              script-src ${isDev ? "'self' 'unsafe-inline'" : "'self'"} https://cdn.vercel-insights.com https://www.googletagmanager.com;
+              script-src 'self' 'unsafe-inline' https://cdn.vercel-insights.com https://www.googletagmanager.com;
               style-src 'self' 'unsafe-inline';
               font-src 'self' https: data:;
-              connect-src ${isDev ? '*' : "'self' https://openrouter.ai"};
+              connect-src *;
               img-src 'self' data: https:;
             `.replace(/\s{2,}/g, ' ').trim(),
           },
