@@ -183,29 +183,38 @@ export default function Home() {
     setUsedPrompts((prev) => [...prev, text])
     setLastTopic(text.toLowerCase())
     setLoading(true)
-    const botReply = await fetchFromOpenRouter(text)
-    setMessages((prev) => [...prev, { from: 'bot', text: botReply }])
+  const botReply = await fetchFromOpenRouter(text)
+  const isHallucinated = (response: string) =>
+    /Rajat.*?(GPT|LLM|Transformer|company that isn't in resume|co-founded.*?(OpenAI|Google))/i.test(response);
+  
+  const filteredReply = isHallucinated(botReply)
+    ? "⚠️ This part of the response seems unrelated to Rajat’s resume. Let’s stick to verified content. Want to ask something else?"
+    : botReply;
+  
+  setMessages((prev) => [...prev, { from: 'bot', text: filteredReply }])
     setLoading(false)
   }
 
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
-    const systemPrompt = resumeData
-      ? `You are Rajat Nirwan’s personal AI assistant, powered by his verified resume.
-
-Your primary responsibility is to generate accurate, resume-based responses. DO NOT make up or invent information. If data is missing, say so clearly.
-
-Tone: Professional, concise, helpful, and slightly witty if appropriate (but never informal or silly). Think: consultant meets AI.
-
-Guidelines:
-1. Respond ONLY using the data available in the resume. If a detail is unclear or absent, state it transparently.
-2. No speculation, no exaggeration, no vague generalities.
-3. Use bullet points when listing projects, skills, or outcomes.
-4. Open with a short summary sentence (1 line max) that frames the reply.
-5. Follow with 2–3 sharp and specific insights, metrics, or highlights.
-6. Close with a follow-up invitation: “Want another highlight?” or “Would you like to hear more?”
-
-Resume:\n${resumeData}`
-      : `Hi! I’m Rajat’s assistant. The resume is still loading—please try again shortly.`;
+  const systemPrompt = resumeData
+    ? `You are Rajat Nirwan’s AI assistant. Your ONLY knowledge source is the resume provided below.
+ 
+ ⚠️ Strict Instructions:
+ - NEVER guess, fabricate, or assume facts.
+ - If information is not in the resume, reply with: "This information isn’t available in the current resume."
+ - Do NOT mention technologies, achievements, or roles unless they are in the resume.
+ - Avoid repeating phrases like “Rajat has experience with...” unless it's backed by resume content.
+ 
+ 📌 Tone: Professional, insightful, concise, and confident. Do NOT be casual, funny, or speculative.
+ 
+ ✅ Output Structure:
+ 1. One-line summary (contextual or reflective)
+ 2. 2–3 bullet points with specific skills, metrics, or experience backed by the resume
+ 3. End with: “Want to explore another part of his background?”
+ 
+ 🔒 Resume Data:
+ ${resumeData}`
+    : `Resume not yet loaded. Please try again shortly.`;
 
     try {
       const res = await fetch('/api/openrouter', {
@@ -216,7 +225,9 @@ Resume:\n${resumeData}`
       body: JSON.stringify({
           message: userMessage,
           resumeData,
-          model: "mistralai/mistral-7b-instruct"
+          model: "mistralai/mistral-7b-instruct",
+          max_tokens: 300,
+          temperature: 0.2
         })
       });
 
