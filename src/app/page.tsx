@@ -185,16 +185,16 @@ export default function Home() {
     setLoading(true)
   const botReply = await fetchFromOpenRouter(text)
   const isHallucinated = (response: string) =>
-    /Rajat.*?(GPT|LLM|Transformer|company that isn't in resume|co-founded.*?(OpenAI|Google))/i.test(response);
+    /Rajat.*?(GPT|LLM|Transformer|Gemini|company that isn't in resume|co-founded.*?(OpenAI|Google))/i.test(response);
   
   const filteredReply = isHallucinated(botReply)
     ? "That part might not be in Rajat’s verified resume, so I can't confirm it. Would you like to download his actual resume instead?"
     : botReply;
   
-  if (/download.*resume/i.test(text)) {
+  if (/download.*resume/i.test(text) || botReply.includes("not in resume")) {
     setMessages(prev => [...prev, {
       from: 'bot',
-      text: `Sure! Here's the link to download Rajat's resume summary:\n\n[Download Resume](https://drive.google.com/uc?export=download&id=1JKaj5lX4w06aeapr6J-C8vNzKl2aMS7e)`
+      text: `Here's the official resume you can download and explore:\n\n[Download Resume](https://drive.google.com/uc?export=download&id=1JKaj5lX4w06aeapr6J-C8vNzKl2aMS7e)`
     }]);
     setLoading(false);
     return;
@@ -243,7 +243,10 @@ ${resumeData}`
       const raw = await res.text();
       try {
         const data = JSON.parse(raw);
-        return data.text || '❌ Sorry, no response.';
+        if (!data.text || data.text.trim().length < 5) {
+          return '❌ The assistant couldn’t generate a meaningful response. Would you like to download the verified resume instead?';
+        }
+        return data.text;
       } catch {
         return '❌ Could not parse response.';
       }
@@ -436,7 +439,9 @@ ${resumeData}`
           <div ref={bottomRef}></div>
         </div>
 
-        <div className="flex items-center gap-3 mt-6">
+      </div>
+      <div className="sticky bottom-0 w-full px-8 py-4 bg-white border-t border-gray-200 z-10">
+        <div className="flex items-center gap-3">
           <input
             type="text"
             placeholder="Ask me something..."
