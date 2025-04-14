@@ -203,27 +203,28 @@ export default function Home() {
   setMessages((prev) => [...prev, { from: 'bot', text: filteredReply }])
   setLoading(false)
   }
-
+  
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
-const systemPrompt = resumeData
-    ? `You are Rajat Nirwan’s AI assistant. Your ONLY knowledge source is the resume provided below.
- 
+    const systemPrompt = resumeData
+      ? `You are Rajat Nirwan’s AI assistant. Your ONLY knowledge source is the resume provided below.
+
 ⚠️ STRICT INSTRUCTIONS:
 - You MUST NOT fabricate, exaggerate, or infer any facts that are not explicitly mentioned in the resume.
 - Never assume roles, technologies, or achievements.
 - Do not repeat vague claims like “Rajat is experienced with…” unless it is supported by resume content.
 - If unsure, respond with: “This information isn’t available in the current resume.”
- 
+
 ✅ RESPONSE FORMAT:
 1. A one-line summary (based only on resume facts).
 2. 2–3 bullet points highlighting specific verified achievements, skills, or experiences.
 3. Conclude with: “Want to explore another part of his background?”
- 
+
 🗣️ Tone: Professional, confident, clear. No humor. No speculation.
  
+🔁 Q&A Source: [Curated Answers](https://drive.google.com/file/d/1c0slFiHcau5Sr-fbyVuEvPD-CoBE03xy/view)
 📄 Resume Data:
 ${resumeData}`
-    : `Resume not yet loaded. Please try again shortly.`;
+      : `Resume not yet loaded. Please try again shortly.`;
 
     try {
       const res = await fetch('/api/openrouter', {
@@ -231,7 +232,7 @@ ${resumeData}`
         headers: {
           'Content-Type': 'application/json'
         },
-      body: JSON.stringify({
+        body: JSON.stringify({
           message: userMessage,
           resumeData,
           model: "meta-llama/llama-3-70b-instruct",
