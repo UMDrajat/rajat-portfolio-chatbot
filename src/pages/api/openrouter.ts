@@ -37,80 +37,79 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   let response, raw, data;
   try {
-    response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: preferredModel,
-        max_tokens: 1000,
-        messages: [
-          { role: 'system', content: resumeData || 'Default prompt' },
-          { role: 'user', content: message }
-        ],
-      }),
-      signal: controller.signal,
-    });
+    try {
+      response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: preferredModel,
+          max_tokens: 1000,
+          messages: [
+            { role: 'system', content: resumeData || 'Default prompt' },
+            { role: 'user', content: message }
+          ],
+        }),
+        signal: controller.signal,
+      });
 
-    raw = await response.text();
+      raw = await response.text();
+      if (!response.ok) throw new Error(raw);
+      data = JSON.parse(raw);
+    } catch (err) {
+      console.warn('Primary model failed, retrying with fallback...');
+      const fallbackRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: fallbackModel,
+          max_tokens: 1000,
+          messages: [
+            { role: 'system', content: resumeData || 'Default prompt' },
+            { role: 'user', content: message }
+          ],
+        }),
+        signal: controller.signal,
+      });
 
-    if (!response.ok) throw new Error(raw);
+      raw = await fallbackRes.text();
+      if (!fallbackRes.ok) {
+        res.setHeader('Content-Type', 'application/json');
+        return res.status(fallbackRes.status).json({ success: false, error: raw });
+      }
 
-    data = JSON.parse(raw);
-  } catch (err) {
-    console.warn('Primary model failed, retrying with fallback...');
-    const fallbackRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: fallbackModel,
-        max_tokens: 1000,
-        messages: [
-          { role: 'system', content: resumeData || 'Default prompt' },
-          { role: 'user', content: message }
-        ],
-      }),
-      signal: controller.signal,
-    });
-
-    raw = await fallbackRes.text();
-
-    if (!fallbackRes.ok) {
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(fallbackRes.status).json({ success: false, error: raw });
+      data = JSON.parse(raw);
     }
 
-    data = JSON.parse(raw);
-  }
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log('✅ OpenRouter result:', data.choices?.[0]?.message?.content);
-  }
-
-  res.setHeader('Content-Type', 'application/json');
-  return res.status(200).json({
-    success: true,
-    text: data.choices?.[0]?.message?.content || 'No response',
-    usage: data.usage || null
-  });
-} catch (error: unknown) {
-  res.setHeader('Content-Type', 'application/json');
-
-  if (error instanceof Error) {
-    console.error('🔴 OpenRouter Error:', error.message);
-    if (error.name === 'AbortError') {
-      return res.status(504).json({ success: false, error: 'Request to OpenRouter timed out.' });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ OpenRouter result:', data.choices?.[0]?.message?.content);
     }
-    return res.status(500).json({ success: false, error: error.message });
-  }
 
-  console.error('🔴 Unknown OpenRouter Error:', error);
-  return res.status(500).json({ success: false, error: 'Failed to fetch from OpenRouter' });
-} finally {
-  clearTimeout(timeout);
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(200).json({
+      success: true,
+      text: data.choices?.[0]?.message?.content || 'No response',
+      usage: data.usage || null
+    });
+  } catch (error: unknown) {
+    res.setHeader('Content-Type', 'application/json');
+
+    if (error instanceof Error) {
+      console.error('🔴 OpenRouter Error:', error.message);
+      if (error.name === 'AbortError') {
+        return res.status(504).json({ success: false, error: 'Request to OpenRouter timed out.' });
+      }
+      return res.status(500).json({ success: false, error: error.message });
+    }
+
+    console.error('🔴 Unknown OpenRouter Error:', error);
+    return res.status(500).json({ success: false, error: 'Failed to fetch from OpenRouter' });
+  } finally {
+    clearTimeout(timeout);
+  }
 }
