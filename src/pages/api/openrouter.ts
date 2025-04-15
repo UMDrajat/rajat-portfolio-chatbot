@@ -50,6 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     const raw = await response.text();
+    console.log("🟡 Raw OpenRouter response:", raw);
 
     if (!response.ok) {
       if (process.env.NODE_ENV === 'development') {
@@ -62,6 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let data;
     try {
       data = JSON.parse(raw);
+      console.log("🟢 Parsed OpenRouter response:", data);
     } catch {
       console.error('Failed to parse JSON:', raw);
       res.setHeader('Content-Type', 'application/json');
