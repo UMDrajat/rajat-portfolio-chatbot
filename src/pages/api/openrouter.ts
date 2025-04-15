@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log("Calling OpenRouter with:", { model, message });
   }
 
-  const preferredModel = model || 'meta-llama/llama-3-70b-instruct';
+  const preferredModel = model || 'mistralai/mistral-7b-instruct';
   const fallbackModel = 'mistralai/mistral-7b-instruct';
 
   let response, raw, data;
