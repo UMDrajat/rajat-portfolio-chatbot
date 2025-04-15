@@ -13,6 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { message, resumeData, model } = req.body as ChatRequest;
+  console.log("Estimated token input length:", message.length + (resumeData?.length || 0));
 
   if (!message) {
     return res.status(400).json({ success: false, error: 'Missing user message.' });
@@ -47,6 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         body: JSON.stringify({
           model: preferredModel,
           max_tokens: 1000,
+          temperature: 0.7,
           messages: [
             { role: 'system', content: resumeData || 'Default prompt' },
             { role: 'user', content: message }
@@ -69,6 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         body: JSON.stringify({
           model: fallbackModel,
           max_tokens: 1000,
+          temperature: 0.7,
           messages: [
             { role: 'system', content: resumeData || 'Default prompt' },
             { role: 'user', content: message }
