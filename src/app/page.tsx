@@ -184,6 +184,15 @@ export default function Home() {
     setLastTopic(text.toLowerCase())
     setLoading(true)
   const botReply = await fetchFromOpenRouter(text)
+  const isTokenExhausted = botReply.toLowerCase().includes("quota") || botReply.toLowerCase().includes("rate limit");
+  if (isTokenExhausted) {
+    setMessages(prev => [...prev, {
+      from: 'bot',
+      text: `It looks like we've reached the token limit for now. You can still [download Rajat's resume here](https://drive.google.com/uc?export=download&id=1JKaj5lX4w06aeapr6J-C8vNzKl2aMS7e) to explore his profile.`
+    }]);
+    setLoading(false);
+    return;
+  }
   const isHallucinated = (response: string) =>
     /Rajat.*?(GPT|LLM|Transformer|Gemini|company that isn't in resume|co-founded.*?(OpenAI|Google))/i.test(response);
   
@@ -207,19 +216,20 @@ export default function Home() {
   const fetchFromOpenRouter = async (userMessage: string): Promise<string> => {
     const systemPrompt = resumeData
       ? `You are Rajat Nirwan’s AI assistant. Your ONLY knowledge source is the resume provided below.
-
+ 
 ⚠️ STRICT INSTRUCTIONS:
 - You MUST NOT fabricate, exaggerate, or infer any facts that are not explicitly mentioned in the resume.
 - Never assume roles, technologies, or achievements.
 - Do not repeat vague claims like “Rajat is experienced with…” unless it is supported by resume content.
 - If unsure, respond with: “This information isn’t available in the current resume.”
-
+ 
 ✅ RESPONSE FORMAT:
-1. A one-line summary (based only on resume facts).
-2. 2–3 bullet points highlighting specific verified achievements, skills, or experiences.
-3. Conclude with: “Want to explore another part of his background?”
-
-🗣️ Tone: Professional, confident, clear. No humor. No speculation.
+- Provide a short 2–3 line paragraph ONLY IF needed to logically connect information.
+- Limit output to 2–3 bullets only when clearly requested for lists.
+- All answers must be resume-based, honest, professional, and helpful.
+- End with: _“Want to dive deeper into any part of his resume?”_
+ 
+🗣️ Tone: Clear, concise, and natural.
  
 🔁 Q&A Source: [Curated Answers](https://drive.google.com/file/d/1c0slFiHcau5Sr-fbyVuEvPD-CoBE03xy/view)
 📄 Resume Data:
