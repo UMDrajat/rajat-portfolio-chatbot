@@ -38,6 +38,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   let response, raw, data;
   try {
+    const limitedResume = resumeData && resumeData.length > 1500 
+      ? resumeData.slice(0, 1500) + '...[truncated]' 
+      : resumeData;
+
     try {
       response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -50,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           max_tokens: 1000,
           temperature: 0.7,
           messages: [
-            { role: 'system', content: resumeData || 'Default prompt' },
+            { role: 'system', content: limitedResume || 'Default prompt' },
             { role: 'user', content: message }
           ],
         }),
@@ -73,7 +77,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           max_tokens: 1000,
           temperature: 0.7,
           messages: [
-            { role: 'system', content: resumeData || 'Default prompt' },
+            { role: 'system', content: limitedResume || 'Default prompt' },
             { role: 'user', content: message }
           ],
         }),
@@ -83,7 +87,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       raw = await fallbackRes.text();
       if (!fallbackRes.ok) {
         res.setHeader('Content-Type', 'application/json');
-        return res.status(fallbackRes.status).json({ success: false, error: raw });
+        return res.status(fallbackRes.status).json({
+          success: true,
+          text: "⚠️ LLM access is currently limited. Would you like to download Rajat’s resume instead?",
+          usage: null
+        });
       }
 
       data = JSON.parse(raw);
