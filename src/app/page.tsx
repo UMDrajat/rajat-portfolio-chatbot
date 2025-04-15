@@ -52,7 +52,7 @@ export default function Home() {
 
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
-      handleUserMessage(transcript);
+      void handleUserMessage(transcript);
       recognition.stop();
     };
 
